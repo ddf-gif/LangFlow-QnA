@@ -3,9 +3,15 @@ FastAPI 应用入口。
 
 启动:
     uvicorn app.main:app --reload
+访问:
+    http://127.0.0.1:8000  — 前端聊天界面
+    http://127.0.0.1:8000/docs  — API 文档
 """
+from pathlib import Path
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 from app.api.routes.chat import router as chat_router
 
@@ -31,3 +37,9 @@ app.include_router(chat_router)
 @app.get("/health")
 async def health():
     return {"status": "ok"}
+
+
+# 挂载前端静态文件
+static_dir = Path(__file__).parent / "static"
+if static_dir.exists():
+    app.mount("/", StaticFiles(directory=str(static_dir), html=True), name="static")
