@@ -10,8 +10,12 @@ dist/
 build/
 
 # 数据
-data/
+data/vector_store/
+data/uploads/
 *.db
+
+# 但保留示例知识文档
+!data/knowledge/
 
 # IDE
 .vscode/
