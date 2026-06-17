@@ -3,209 +3,489 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>LangFlow-QnA</title>
+    <title>LangFlow QnA</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     <style>
+        /* ── Reset & Base ── */
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
         :root {
-            --primary: #6366f1;
-            --primary-hover: #4f46e5;
-            --primary-light: #eef2ff;
-            --bg: #f8fafc;
-            --surface: #ffffff;
-            --text: #0f172a;
-            --text-secondary: #64748b;
-            --border: #e2e8f0;
-            --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
-            --radius: 12px;
-            --radius-sm: 8px;
+            --bg-primary: #0b0c15;
+            --bg-secondary: #11131f;
+            --bg-surface: rgba(20, 22, 40, 0.75);
+            --bg-glass: rgba(255, 255, 255, 0.03);
+            --border-subtle: rgba(255, 255, 255, 0.06);
+            --border-accent: rgba(0, 240, 255, 0.18);
+
+            --cyan: #00f0ff;
+            --cyan-dim: rgba(0, 240, 255, 0.15);
+            --amber: #f0b34b;
+            --amber-dim: rgba(240, 179, 75, 0.12);
+            --magenta: #ff6b9d;
+            --text-primary: #e4e6f0;
+            --text-secondary: #8a8da8;
+            --text-muted: #555870;
+
+            --font-display: 'Space Mono', monospace;
+            --font-body: 'Outfit', sans-serif;
+            --radius: 16px;
+            --radius-sm: 10px;
         }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html { height: 100%; }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background: var(--bg); color: var(--text); height: 100vh;
-            display: flex; flex-direction: column;
+            height: 100%;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: var(--font-body);
+            font-weight: 400;
+            overflow: hidden;
+            line-height: 1.5;
+        }
+
+        /* ── Animated Background ── */
+        .bg-canvas {
+            position: fixed; inset: 0; z-index: 0; overflow: hidden;
+            pointer-events: none;
+        }
+        .bg-canvas .grid {
+            position: absolute; inset: 0;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.017) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.017) 1px, transparent 1px);
+            background-size: 48px 48px;
+        }
+        .bg-canvas .glow-1 {
+            position: absolute;
+            top: -20%; left: -10%;
+            width: 60%; height: 60%;
+            background: radial-gradient(ellipse, rgba(0,240,255,0.06) 0%, transparent 70%);
+            animation: floatGlow 12s ease-in-out infinite alternate;
+        }
+        .bg-canvas .glow-2 {
+            position: absolute;
+            bottom: -15%; right: -5%;
+            width: 50%; height: 50%;
+            background: radial-gradient(ellipse, rgba(240,179,75,0.05) 0%, transparent 70%);
+            animation: floatGlow 16s ease-in-out infinite alternate-reverse;
+        }
+        @keyframes floatGlow {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(40px, 30px) scale(1.15); }
+        }
+
+        /* ── Noise Overlay ── */
+        .noise {
+            position: fixed; inset: 0; z-index: 1; pointer-events: none;
+            opacity: 0.025;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+            background-size: 256px 256px;
         }
 
         /* ── Layout ── */
-        .app-layout { display: flex; height: 100vh; }
-        .sidebar {
-            width: 320px; background: var(--surface); border-right: 1px solid var(--border);
-            display: flex; flex-direction: column; flex-shrink: 0;
-        }
-        .main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+        .app { position: relative; z-index: 2; display: flex; height: 100vh; gap: 0; }
 
         /* ── Sidebar ── */
-        .sidebar-header { padding: 20px 20px 16px; border-bottom: 1px solid var(--border); }
-        .sidebar-header h1 {
-            font-size: 18px; font-weight: 700; letter-spacing: -0.3px;
-            background: linear-gradient(135deg, var(--primary), #a855f7);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-        }
-        .sidebar-header p { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
-
-        .sidebar-section { padding: 16px 20px; border-bottom: 1px solid var(--border); }
-        .sidebar-section h2 {
-            font-size: 11px; font-weight: 600; color: var(--text-secondary);
-            text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px;
+        .sidebar {
+            width: 320px;
+            background: var(--bg-glass);
+            backdrop-filter: blur(24px) saturate(1.2);
+            border-right: 1px solid var(--border-subtle);
+            display: flex; flex-direction: column;
+            flex-shrink: 0;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* ── Upload Area ── */
+        .sidebar-brand {
+            padding: 28px 24px 20px;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+        .sidebar-brand .logo {
+            display: flex; align-items: center; gap: 10px;
+            font-family: var(--font-display);
+            font-weight: 700; font-size: 15px;
+            letter-spacing: -0.3px;
+        }
+        .sidebar-brand .logo .mark {
+            width: 28px; height: 28px;
+            border: 2px solid var(--cyan);
+            border-radius: 6px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 12px; color: var(--cyan);
+            box-shadow: 0 0 12px var(--cyan-dim);
+        }
+        .sidebar-brand .sub {
+            font-size: 12px; color: var(--text-muted);
+            margin-top: 4px; margin-left: 38px;
+            font-weight: 300; letter-spacing: 0.3px;
+        }
+
+        .sidebar-section {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+        .sidebar-section:last-of-type { border-bottom: none; flex: 1; overflow-y: auto; }
+
+        .section-label {
+            font-family: var(--font-display);
+            font-size: 10px; font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase; letter-spacing: 1.2px;
+            margin-bottom: 12px;
+        }
+
+        /* ── Upload Zone ── */
         .upload-zone {
-            border: 2px dashed var(--border); border-radius: var(--radius-sm);
-            padding: 20px 16px; text-align: center; cursor: pointer;
-            transition: all 0.2s; position: relative;
+            border: 1.5px dashed rgba(255,255,255,0.1);
+            border-radius: var(--radius-sm);
+            padding: 18px 14px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
         }
-        .upload-zone:hover, .upload-zone.dragover {
-            border-color: var(--primary); background: var(--primary-light);
+        .upload-zone:hover,
+        .upload-zone.dragover {
+            border-color: var(--cyan);
+            background: var(--cyan-dim);
+            box-shadow: 0 0 20px rgba(0,240,255,0.06);
         }
-        .upload-zone .icon { font-size: 28px; margin-bottom: 6px; }
+        .upload-zone .icon { font-size: 22px; margin-bottom: 4px; opacity: 0.7; }
         .upload-zone .label { font-size: 13px; color: var(--text-secondary); }
-        .upload-zone .hint { font-size: 11px; color: #94a3b8; margin-top: 4px; }
+        .upload-zone .hint { font-size: 11px; color: var(--text-muted); margin-top: 3px; }
         .upload-zone input[type="file"] { display: none; }
-        .upload-status { margin-top: 10px; font-size: 12px; color: var(--text-secondary); }
-        .upload-status.success { color: #16a34a; }
-        .upload-status.error { color: #dc2626; }
+
+        .upload-status {
+            margin-top: 10px;
+            font-size: 12px;
+            color: var(--text-muted);
+            transition: all 0.3s;
+        }
+        .upload-status.success { color: var(--cyan); }
+        .upload-status.error { color: var(--magenta); }
 
         /* ── Knowledge List ── */
         .doc-list { display: flex; flex-direction: column; gap: 6px; }
         .doc-item {
-            font-size: 12px; padding: 6px 10px; background: var(--bg);
-            border-radius: 6px; display: flex; align-items: center; gap: 6px;
+            font-size: 12px;
+            padding: 7px 10px;
+            background: rgba(255,255,255,0.025);
+            border: 1px solid var(--border-subtle);
+            border-radius: 6px;
+            display: flex; align-items: center; gap: 8px;
             color: var(--text-secondary);
+            transition: border-color 0.2s;
         }
+        .doc-item:hover { border-color: rgba(255,255,255,0.12); }
+        .doc-item .icon { font-size: 14px; flex-shrink: 0; }
         .doc-item .name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-
-        /* ── Chat Header ── */
-        .chat-header {
-            padding: 14px 24px; background: var(--surface);
-            border-bottom: 1px solid var(--border); display: flex;
-            align-items: center; justify-content: space-between;
+        .doc-item .badge {
+            font-size: 10px;
+            background: var(--cyan-dim);
+            color: var(--cyan);
+            padding: 1px 7px;
+            border-radius: 10px;
+            font-family: var(--font-display);
         }
-        .chat-header h2 { font-size: 15px; font-weight: 600; }
+
+        /* ── Main Panel ── */
+        .main {
+            flex: 1; display: flex; flex-direction: column; min-width: 0;
+            background: var(--bg-secondary);
+            position: relative;
+        }
+
+        .chat-header {
+            padding: 16px 28px;
+            background: var(--bg-glass);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .chat-header h2 {
+            font-family: var(--font-display);
+            font-size: 13px; font-weight: 700;
+            letter-spacing: 0.5px;
+            color: var(--text-primary);
+        }
         .chat-header .status {
-            font-size: 11px; color: var(--text-secondary);
-            display: flex; align-items: center; gap: 4px;
+            font-size: 11px;
+            color: var(--text-muted);
+            display: flex; align-items: center; gap: 6px;
+            font-family: var(--font-display);
         }
         .chat-header .status .dot {
-            width: 6px; height: 6px; border-radius: 50%; background: #22c55e;
+            width: 6px; height: 6px; border-radius: 50%;
+            background: var(--amber);
+            box-shadow: 0 0 8px var(--amber-dim);
+            animation: pulseDot 2s ease-in-out infinite;
+        }
+        @keyframes pulseDot {
+            0%, 100% { opacity: 0.5; box-shadow: 0 0 4px var(--amber-dim); }
+            50% { opacity: 1; box-shadow: 0 0 12px var(--amber-dim); }
         }
 
         /* ── Messages ── */
         #chat-container {
-            flex: 1; overflow-y: auto; padding: 24px;
-            display: flex; flex-direction: column; gap: 16px;
+            flex: 1; overflow-y: auto; padding: 28px 28px 12px;
+            display: flex; flex-direction: column; gap: 18px;
+            scroll-behavior: smooth;
         }
+        #chat-container::-webkit-scrollbar { width: 4px; }
+        #chat-container::-webkit-scrollbar-track { background: transparent; }
+        #chat-container::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
+
         .msg {
-            max-width: 72%; padding: 12px 16px; border-radius: var(--radius);
-            line-height: 1.65; font-size: 14px; word-break: break-word;
-            animation: fadeIn 0.25s ease;
+            max-width: 72%;
+            padding: 14px 18px;
+            border-radius: var(--radius);
+            line-height: 1.7;
+            font-size: 14px;
+            word-break: break-word;
+            animation: msgIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
         }
+
         .msg.user {
-            align-self: flex-end; background: var(--primary); color: #fff;
+            align-self: flex-end;
+            background: linear-gradient(135deg, rgba(0,240,255,0.12) 0%, rgba(0,240,255,0.05) 100%);
+            border: 1px solid rgba(0,240,255,0.15);
+            color: var(--text-primary);
             border-bottom-right-radius: 4px;
         }
-        .msg.bot {
-            align-self: flex-start; background: var(--surface);
-            color: var(--text); box-shadow: var(--shadow);
-            border-bottom-left-radius: 4px;
+        .msg.user::before {
+            content: '';
+            position: absolute;
+            bottom: -1px; right: -1px;
+            width: 30px; height: 30px;
+            background: radial-gradient(circle at bottom right, rgba(0,240,255,0.08), transparent 70%);
+            pointer-events: none;
         }
-        .msg.bot .loading {
-            display: inline-flex; gap: 3px; align-items: center;
-        }
-        .msg.bot .loading span {
-            width: 6px; height: 6px; background: var(--primary); border-radius: 50%;
-            animation: bounce 1.2s infinite;
-        }
-        .msg.bot .loading span:nth-child(2) { animation-delay: 0.2s; }
-        .msg.bot .loading span:nth-child(3) { animation-delay: 0.4s; }
-        @keyframes bounce { 0%,80%,100% { transform: scale(0.6); } 40% { transform: scale(1); } }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
-        .welcome {
-            margin: auto; text-align: center; padding: 40px 20px;
+        .msg.bot {
+            align-self: flex-start;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-primary);
+            border-bottom-left-radius: 4px;
+            backdrop-filter: blur(8px);
         }
-        .welcome .icon { font-size: 48px; margin-bottom: 12px; }
-        .welcome h3 { font-size: 18px; font-weight: 600; color: var(--text); }
-        .welcome p { font-size: 13px; color: var(--text-secondary); margin-top: 6px; }
+
+        .msg.bot .thinking {
+            display: flex; gap: 4px; align-items: center; padding: 4px 0;
+        }
+        .msg.bot .thinking span {
+            width: 6px; height: 6px;
+            background: var(--cyan);
+            border-radius: 50%;
+            animation: thinkBounce 1.2s ease-in-out infinite;
+        }
+        .msg.bot .thinking span:nth-child(2) { animation-delay: 0.15s; }
+        .msg.bot .thinking span:nth-child(3) { animation-delay: 0.3s; }
+        @keyframes thinkBounce {
+            0%, 80%, 100% { transform: scale(0.6); opacity: 0.3; }
+            40% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes msgIn {
+            from { opacity: 0; transform: translateY(12px) scale(0.97); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        /* ── Welcome ── */
+        .welcome {
+            margin: auto;
+            text-align: center;
+            padding: 40px 20px;
+            max-width: 480px;
+        }
+        .welcome .glyph {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.6;
+            filter: drop-shadow(0 0 20px rgba(0,240,255,0.15));
+        }
+        .welcome h3 {
+            font-family: var(--font-display);
+            font-size: 16px; font-weight: 700;
+            letter-spacing: -0.3px;
+            margin-bottom: 6px;
+        }
+        .welcome p {
+            font-size: 13px; color: var(--text-secondary);
+            font-weight: 300;
+            margin-bottom: 20px;
+        }
         .welcome .examples {
-            display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 16px;
+            display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;
         }
         .welcome .examples button {
-            padding: 6px 14px; font-size: 12px; background: var(--primary-light);
-            border: 1px solid var(--border); border-radius: 20px; cursor: pointer;
-            color: var(--primary); transition: all 0.2s;
+            padding: 7px 16px;
+            font-size: 12px;
+            font-family: var(--font-body);
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border-subtle);
+            border-radius: 20px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: all 0.25s ease;
         }
-        .welcome .examples button:hover { background: var(--primary); color: #fff; }
+        .welcome .examples button:hover {
+            border-color: var(--cyan);
+            color: var(--cyan);
+            background: var(--cyan-dim);
+            box-shadow: 0 0 16px rgba(0,240,255,0.06);
+            transform: translateY(-1px);
+        }
 
         /* ── Input ── */
         #input-area {
-            background: var(--surface); border-top: 1px solid var(--border);
-            padding: 16px 24px; display: flex; gap: 10px; align-items: flex-end;
+            padding: 16px 28px 20px;
+            background: var(--bg-glass);
+            backdrop-filter: blur(16px);
+            border-top: 1px solid var(--border-subtle);
+            display: flex; gap: 10px; align-items: flex-end;
             margin-top: auto;
         }
-        #input-area textarea {
-            flex: 1; resize: none; border: 1px solid var(--border);
-            border-radius: var(--radius-sm); padding: 10px 14px;
-            font-size: 14px; outline: none; font-family: inherit;
-            min-height: 44px; max-height: 120px; line-height: 1.5;
-            transition: border-color 0.2s;
+        .input-wrap {
+            flex: 1;
+            display: flex;
+            align-items: flex-end;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-sm);
+            transition: border-color 0.25s;
+            padding: 2px;
         }
-        #input-area textarea:focus { border-color: var(--primary); }
-        #input-area button {
-            background: var(--primary); color: #fff; border: none;
-            border-radius: var(--radius-sm); padding: 0 22px; height: 44px;
-            font-size: 14px; cursor: pointer; white-space: nowrap;
-            transition: background 0.2s; font-weight: 500;
+        .input-wrap:focus-within {
+            border-color: rgba(0,240,255,0.25);
+            box-shadow: 0 0 20px rgba(0,240,255,0.04);
         }
-        #input-area button:hover { background: var(--primary-hover); }
-        #input-area button:disabled { background: #94a3b8; cursor: not-allowed; }
-
-        /* ── Scrollbar ── */
-        #chat-container::-webkit-scrollbar, .sidebar::-webkit-scrollbar { width: 4px; }
-        #chat-container::-webkit-scrollbar-track, .sidebar::-webkit-scrollbar-track { background: transparent; }
-        #chat-container::-webkit-scrollbar-thumb, .sidebar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 2px; }
-
-        /* ── Mobile ── */
-        @media (max-width: 768px) {
-            .sidebar { display: none; }
-            .msg { max-width: 88%; font-size: 13px; }
-            #input-area { padding: 12px 16px; }
-            #chat-container { padding: 16px; }
+        .input-wrap textarea {
+            flex: 1;
+            resize: none;
+            border: none;
+            background: transparent;
+            padding: 10px 14px;
+            font-size: 14px;
+            outline: none;
+            font-family: var(--font-body);
+            color: var(--text-primary);
+            min-height: 44px;
+            max-height: 120px;
+            line-height: 1.5;
         }
+        .input-wrap textarea::placeholder { color: var(--text-muted); }
 
-        /* ── Upload modal (mobile file dialog fallback) ── */
+        #send-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 0 6px 0 0;
+            height: 44px;
+            width: 44px;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: color 0.2s;
+            font-size: 18px;
+        }
+        #send-btn:hover { color: var(--cyan); }
+        #send-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+        #send-btn svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+        /* ── Toast ── */
         .toast {
-            position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
-            background: #1e293b; color: #fff; padding: 10px 20px; border-radius: 8px;
-            font-size: 13px; z-index: 100; opacity: 0; transition: opacity 0.3s;
+            position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(80px);
+            background: rgba(20,22,40,0.92);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-primary);
+            padding: 10px 22px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            z-index: 100;
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             pointer-events: none;
+            font-family: var(--font-body);
         }
-        .toast.show { opacity: 1; }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+        /* ── Mobile Responsive ── */
+        @media (max-width: 820px) {
+            .sidebar { position: fixed; left: 0; top: 0; bottom: 0; z-index: 50; transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); }
+            .msg { max-width: 88%; font-size: 13px; }
+            #chat-container { padding: 20px 16px 8px; }
+            #input-area { padding: 12px 16px 16px; }
+            .mobile-toggle {
+                display: flex !important;
+                position: fixed; top: 14px; left: 14px; z-index: 60;
+                width: 36px; height: 36px;
+                background: var(--bg-surface);
+                backdrop-filter: blur(12px);
+                border: 1px solid var(--border-subtle);
+                border-radius: 8px;
+                align-items: center; justify-content: center;
+                cursor: pointer; color: var(--text-secondary);
+                font-size: 16px;
+            }
+            .mobile-overlay {
+                position: fixed; inset: 0; z-index: 49;
+                background: rgba(0,0,0,0.5);
+                opacity: 0; pointer-events: none;
+                transition: opacity 0.3s;
+            }
+            .mobile-overlay.show { opacity: 1; pointer-events: auto; }
+        }
+        @media (min-width: 821px) {
+            .mobile-toggle, .mobile-overlay { display: none; }
+        }
     </style>
 </head>
 <body>
-    <div class="app-layout">
+
+    <!-- Background -->
+    <div class="bg-canvas">
+        <div class="grid"></div>
+        <div class="glow-1"></div>
+        <div class="glow-2"></div>
+    </div>
+    <div class="noise"></div>
+
+    <!-- Mobile toggle -->
+    <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle sidebar">☰</button>
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+
+    <!-- App -->
+    <div class="app">
+
         <!-- Sidebar -->
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <h1>LangFlow-QnA</h1>
-                <p>基于 LangChain + LangGraph 的问答系统</p>
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-brand">
+                <div class="logo">
+                    <span class="mark">LQ</span>
+                    <span>LangFlow QnA</span>
+                </div>
+                <div class="sub">knowledge agent · v0.1</div>
             </div>
 
             <div class="sidebar-section">
-                <h2>📄 上传文档</h2>
+                <div class="section-label">📄 导入文档</div>
                 <div class="upload-zone" id="uploadZone">
-                    <div class="icon">📁</div>
-                    <div class="label">点击或拖拽文件到此处</div>
-                    <div class="hint">支持 .txt .md .py .js .json 等文本格式</div>
+                    <div class="icon">⊕</div>
+                    <div class="label">点击或拖拽文件</div>
+                    <div class="hint">支持 .txt .md .py .json</div>
                     <input type="file" id="fileInput" accept=".txt,.md,.py,.js,.ts,.json,.csv" />
                 </div>
                 <div class="upload-status" id="uploadStatus"></div>
             </div>
 
             <div class="sidebar-section" style="flex:1; overflow-y:auto;">
-                <h2>📚 知识库文档</h2>
+                <div class="section-label">📚 知识库</div>
                 <div class="doc-list" id="docList">
-                    <div style="font-size:12px;color:#94a3b8;">暂无文档，请上传</div>
+                    <div style="font-size:12px;color:var(--text-muted);padding:8px 4px;">暂无文档</div>
                 </div>
             </div>
         </aside>
@@ -213,26 +493,30 @@
         <!-- Main -->
         <div class="main">
             <div class="chat-header">
-                <h2>💬 对话</h2>
-                <div class="status"><span class="dot"></span> 服务运行中</div>
+                <h2>⌘ 对话</h2>
+                <div class="status"><span class="dot"></span> online</div>
             </div>
 
             <div id="chat-container">
                 <div class="welcome" id="welcome">
-                    <div class="icon">🤖</div>
-                    <h3>你好！我是 LangFlow 助手</h3>
-                    <p>上传知识文档后，我可以回答文档中的任何问题</p>
+                    <div class="glyph">◇</div>
+                    <h3>你好，我是 LangFlow 助手</h3>
+                    <p>导入文档即可开始问答</p>
                     <div class="examples">
-                        <button onclick="ask('2024年营收多少')">2024年营收多少</button>
-                        <button onclick="ask('公司有多少员工')">公司有多少员工</button>
-                        <button onclick="ask('主要产品有哪些')">主要产品有哪些</button>
+                        <button onclick="ask('2024年营收多少')">2024 营收</button>
+                        <button onclick="ask('公司有多少员工')">员工数</button>
+                        <button onclick="ask('主要产品有哪些')">产品</button>
                     </div>
                 </div>
             </div>
 
             <div id="input-area">
-                <textarea id="input" rows="1" placeholder="输入消息..." autofocus></textarea>
-                <button id="send-btn">发送</button>
+                <div class="input-wrap">
+                    <textarea id="input" rows="1" placeholder="键入消息..." autofocus></textarea>
+                    <button id="send-btn" title="发送">
+                        <svg viewBox="0 0 24 24"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -243,8 +527,9 @@
         // ── State ──
         const sessionId = 'web-' + Date.now();
         let uploading = false;
+        let docs = [];
 
-        // ── DOM refs ──
+        // ── DOM ──
         const container = document.getElementById('chat-container');
         const input = document.getElementById('input');
         const sendBtn = document.getElementById('send-btn');
@@ -253,12 +538,24 @@
         const fileInput = document.getElementById('fileInput');
         const uploadStatus = document.getElementById('uploadStatus');
         const docList = document.getElementById('docList');
+        const sidebar = document.getElementById('sidebar');
+        const mobileToggle = document.getElementById('mobileToggle');
+        const mobileOverlay = document.getElementById('mobileOverlay');
+
+        // ── Mobile sidebar ──
+        function toggleSidebar(open) {
+            sidebar.classList.toggle('open', open);
+            mobileOverlay.classList.toggle('show', open);
+        }
+        mobileToggle.addEventListener('click', () => toggleSidebar(true));
+        mobileOverlay.addEventListener('click', () => toggleSidebar(false));
 
         // ── Toast ──
         function showToast(msg) {
             const t = document.getElementById('toast');
             t.textContent = msg; t.classList.add('show');
-            setTimeout(() => t.classList.remove('show'), 2500);
+            clearTimeout(t._hide);
+            t._hide = setTimeout(() => t.classList.remove('show'), 2600);
         }
 
         // ── Chat ──
@@ -267,7 +564,7 @@
             const el = document.createElement('div');
             el.className = 'msg ' + role;
             if (loading) {
-                el.innerHTML = '<div class="loading"><span></span><span></span><span></span></div>';
+                el.innerHTML = '<div class="thinking"><span></span><span></span><span></span></div>';
             } else {
                 el.textContent = text;
             }
@@ -276,22 +573,15 @@
             return el;
         }
 
-        function ask(text) {
-            input.value = text;
-            sendMessage();
-        }
+        function ask(text) { input.value = text; sendMessage(); }
 
         async function sendMessage() {
             const text = input.value.trim();
             if (!text) return;
-
-            input.value = '';
-            input.style.height = 'auto';
+            input.value = ''; input.style.height = 'auto';
             sendBtn.disabled = true;
-
             addMessage(text, 'user');
             const botEl = addMessage('', 'bot', true);
-
             try {
                 const res = await fetch('/api/chat', {
                     method: 'POST',
@@ -301,12 +591,11 @@
                 const data = await res.json();
                 botEl.textContent = '';
                 botEl.textContent = data.reply;
-            } catch (err) {
+            } catch (_) {
                 botEl.textContent = '';
-                botEl.textContent = '请求失败，请检查服务是否运行';
+                botEl.textContent = '请求失败，请检查服务';
             } finally {
-                sendBtn.disabled = false;
-                input.focus();
+                sendBtn.disabled = false; input.focus();
             }
         }
 
@@ -314,67 +603,59 @@
         async function uploadFile(file) {
             if (uploading) return;
             uploading = true;
-            uploadStatus.textContent = '⏳ 上传中...';
+            uploadStatus.textContent = '⏳ 导入中...';
             uploadStatus.className = 'upload-status';
-
-            const formData = new FormData();
-            formData.append('file', file);
-
+            const fd = new FormData();
+            fd.append('file', file);
             try {
-                const res = await fetch('/api/documents/upload', {
-                    method: 'POST',
-                    body: formData,
-                });
+                const res = await fetch('/api/documents/upload', { method: 'POST', body: fd });
                 const data = await res.json();
                 if (res.ok) {
-                    uploadStatus.textContent = `✅ ${data.message}`;
+                    uploadStatus.textContent = `✓ ${data.message}`;
                     uploadStatus.className = 'upload-status success';
-                    showToast(`成功导入 ${data.chunks} 个片段`);
-                    refreshDocList();
+                    showToast(`导入 ${data.chunks} 个片段`);
+                    docs.push({ name: file.name, chunks: data.chunks });
+                    renderDocList();
                 } else {
-                    uploadStatus.textContent = `❌ ${data.detail || '上传失败'}`;
+                    uploadStatus.textContent = '✕ ' + (data.detail || '失败');
                     uploadStatus.className = 'upload-status error';
                 }
-            } catch (err) {
-                uploadStatus.textContent = '❌ 上传失败，请检查服务';
+            } catch (_) {
+                uploadStatus.textContent = '✕ 上传失败';
                 uploadStatus.className = 'upload-status error';
             } finally {
-                uploading = false;
-                fileInput.value = '';
+                uploading = false; fileInput.value = '';
             }
         }
 
-        function refreshDocList() {
-            // 简单从上传状态推断，暂时显示提示
-            docList.innerHTML = '<div style="font-size:12px;color:#94a3b8;">文档已上传，可开始问答</div>';
+        function renderDocList() {
+            if (!docs.length) {
+                docList.innerHTML = '<div style="font-size:12px;color:var(--text-muted);padding:8px 4px;">暂无文档</div>';
+                return;
+            }
+            docList.innerHTML = docs.map(d => `
+                <div class="doc-item">
+                    <span class="icon">📄</span>
+                    <span class="name">${d.name}</span>
+                    <span class="badge">${d.chunks}</span>
+                </div>
+            `).join('');
         }
 
         // ── Events ──
         sendBtn.addEventListener('click', sendMessage);
         input.addEventListener('keydown', e => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault(); sendMessage();
-            }
+            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
         });
         input.addEventListener('input', () => {
             input.style.height = 'auto';
             input.style.height = Math.min(input.scrollHeight, 120) + 'px';
         });
 
-        // Upload click
         uploadZone.addEventListener('click', () => fileInput.click());
-        fileInput.addEventListener('change', e => {
-            if (e.target.files.length) uploadFile(e.target.files[0]);
-        });
-
-        // Drag & drop
-        uploadZone.addEventListener('dragover', e => {
-            e.preventDefault();
-            uploadZone.classList.add('dragover');
-        });
-        uploadZone.addEventListener('dragleave', () => {
-            uploadZone.classList.remove('dragover');
-        });
+        fileInput.addEventListener('change', e => { if (e.target.files.length) uploadFile(e.target.files[0]); });
+        uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('dragover'); });
+        uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('dragover'));
         uploadZone.addEventListener('drop', e => {
             e.preventDefault();
             uploadZone.classList.remove('dragover');
