@@ -73,6 +73,37 @@ def split_documents(docs: List[Document]) -> List[Document]:
     return chunks
 
 
+def load_single_file(filepath: str | Path) -> List[Document]:
+    """加载单个文件。"""
+    filepath = Path(filepath)
+    suffix = filepath.suffix.lower()
+
+    if suffix in (".txt", ".md", ".py", ".js", ".ts", ".json", ".csv"):
+        loader = TextLoader(str(filepath), encoding="utf-8")
+    else:
+        raise ValueError(f"不支持的文件格式: {suffix}")
+
+    return loader.load()
+
+
+def ingest_file(filepath: str | Path) -> int:
+    """导入单个文件到向量库，返回片段数。"""
+    import os
+    if "HF_ENDPOINT" not in os.environ:
+        os.environ["HF_ENDPOINT"] = "https://hf-mirror.com"
+
+    print(f"  加载文件: {filepath}")
+    docs = load_single_file(filepath)
+    if not docs:
+        return 0
+
+    chunks = split_documents(docs)
+    store = get_vector_store()
+    store.add_documents(chunks)
+    print(f"  导入完成: {len(chunks)} 个片段")
+    return len(chunks)
+
+
 def ingest_directory(docs_dir: str | Path):
     """
     完整的导入流程：加载 → 分块 → 向量化 → 入库
