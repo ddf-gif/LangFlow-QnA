@@ -54,7 +54,18 @@ def create_embeddings():
     )
 
 
-embeddings = create_embeddings()
+_embeddings_instance = None
+
+
+def get_embeddings():
+    """懒加载 Embedding 模型（首次调用时才下载）。"""
+    global _embeddings_instance
+    if _embeddings_instance is None:
+        import os
+        if "HF_ENDPOINT" not in os.environ:
+            os.environ["HF_ENDPOINT"] = "https://hf-mirror.com"
+        _embeddings_instance = create_embeddings()
+    return _embeddings_instance
 
 
 def get_vector_store() -> Chroma:
@@ -63,10 +74,13 @@ def get_vector_store() -> Chroma:
 
     持久化路径由 settings.vector_store_path 控制，
     默认保存在 ./data/vector_store/
+
+    注意：embeddings 是懒加载的，首次调用 get_vector_store()
+    或 get_retriever() 时才会下载模型。
     """
     return Chroma(
         collection_name=settings.vector_store_collection,
-        embedding_function=embeddings,
+        embedding_function=get_embeddings(),
         persist_directory=str(settings.vector_store_path),
     )
 
