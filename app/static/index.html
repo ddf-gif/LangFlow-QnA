@@ -255,6 +255,44 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 .chunk-tag:hover{border-color:var(--primary);color:var(--primary);background:var(--primary-subtle)}
 .chunk-tag.act{border-color:var(--primary);background:var(--primary-light);color:var(--primary);font-weight:600}
 .preview-footer{display:flex;justify-content:flex-end;gap:8px;padding:12px 20px 16px;border-top:1px solid var(--border)}
+/* ── Agent Config Form ── */
+.ag-page{flex:1;overflow-y:auto;padding:24px 28px 40px;max-width:800px}
+.ag-page .ag-hdr{margin-bottom:24px}
+.ag-page .ag-hdr h1{font-size:20px;font-weight:600}
+.ag-page .ag-hdr p{font-size:13px;color:var(--text-muted);margin-top:2px}
+.ag-grp{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-card);margin-bottom:14px;overflow:hidden}
+.ag-grp-h{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;cursor:pointer;user-select:none;transition:background var(--transition)}
+.ag-grp-h:hover{background:var(--surface-hover)}
+.ag-grp-h .gt{font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px}
+.ag-grp-h .gt .gi{font-size:16px}
+.ag-grp-h .ga{font-size:12px;color:var(--text-muted);transition:transform var(--transition)}
+.ag-grp-h .ga.open{transform:rotate(180deg)}
+.ag-grp-b{padding:16px 18px 20px;border-top:1px solid var(--border)}
+.ag-grp-b.hide{display:none}
+.ag-fld{margin-bottom:16px}
+.ag-fld:last-child{margin-bottom:0}
+.ag-fld .fl{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.ag-fld .fl label{font-size:13px;font-weight:500;color:var(--text)}
+.ag-fld .fl .desc{font-size:11px;color:var(--text-muted)}
+.ag-fld input[type=text],.ag-fld textarea,.ag-fld select{width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:13px;outline:none;font-family:var(--font);color:var(--text);background:var(--bg);transition:border-color var(--transition)}
+.ag-fld input:focus,.ag-fld textarea:focus,.ag-fld select:focus{border-color:var(--primary);box-shadow:0 0 0 2px var(--primary-light)}
+.ag-fld textarea{min-height:80px;resize:vertical;line-height:1.6}
+.ag-fld .slider-row{display:flex;align-items:center;gap:12px}
+.ag-fld input[type=range]{flex:1;height:4px;-webkit-appearance:none;appearance:none;background:var(--border-light);border-radius:2px;outline:none}
+.ag-fld input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--primary);cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,0.15)}
+.ag-fld .sv{font-size:13px;font-weight:600;color:var(--primary);min-width:36px;text-align:right}
+.ag-fld .radio-g{display:flex;gap:8px}
+.ag-fld .radio-g label{display:flex;align-items:center;gap:6px;padding:6px 14px;border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:13px;color:var(--text-secondary);transition:all var(--transition)}
+.ag-fld .radio-g label:hover{border-color:var(--primary-light);background:var(--primary-subtle)}
+.ag-fld .radio-g label.act{border-color:var(--primary);background:var(--primary-light);color:var(--primary);font-weight:600}
+.ag-fld .radio-g input{display:none}
+.ag-fld .kb-chk{display:flex;flex-wrap:wrap;gap:8px}
+.ag-fld .kb-chk label{display:flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:13px;color:var(--text-secondary);transition:all var(--transition)}
+.ag-fld .kb-chk label:hover{border-color:var(--primary-light)}
+.ag-fld .kb-chk label.chk{border-color:var(--primary);background:var(--primary-subtle);color:var(--text)}
+.ag-fld .kb-chk input{display:none}
+.ag-acts{display:flex;gap:10px;padding-top:4px}
+.ag-acts .btn{padding:8px 24px;font-size:13px}
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#1A2332;color:#fff;padding:10px 22px;border-radius:8px;font-size:13px;z-index:200;opacity:0;transition:all 0.35s cubic-bezier(0.16,1,0.3,1);pointer-events:none;font-family:var(--font)}
 .page{display:none}.page.act{display:flex;flex-direction:column;flex:1;overflow:hidden}
 
@@ -275,7 +313,7 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
       <div class="nav-it" data-page="docs"><span class="ic">📄</span>文档管理<span class="ct">48</span></div>
     </div>
     <div class="nav-g"><div class="nav-g-t">管理</div>
-      <div class="nav-it"><span class="ic">⚙️</span>Agent 配置</div>
+      <div class="nav-it" data-page="agent"><span class="ic">⚙️</span>Agent 配置</div>
       <div class="nav-it"><span class="ic">🔑</span>权限分组</div>
       <div class="nav-it"><span class="ic">👤</span>角色管理</div>
     </div>
@@ -423,6 +461,138 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 </div>
 </div>
 
+<!-- ── Agent Config Page ── -->
+<div class="page" id="page-agent">
+  <div class="ag-page">
+    <div class="ag-hdr"><h1>⚙️ Agent 配置</h1><p>自定义 AI 问答助手的运行参数和行为风格</p></div>
+
+    <!-- Basic -->
+    <div class="ag-grp">
+      <div class="ag-grp-h" onclick="toggleGrp(this)">
+        <span class="gt"><span class="gi">🆔</span> 基本设置</span>
+        <span class="ga open">▼</span>
+      </div>
+      <div class="ag-grp-b">
+        <div class="ag-fld">
+          <div class="fl"><label>Agent 名称</label><span class="desc">对外展示的助手名称</span></div>
+          <input type="text" value="LangFlow 知识库助手" placeholder="输入名称" />
+        </div>
+        <div class="ag-fld">
+          <div class="fl"><label>专属提示词</label><span class="desc">系统级 prompt，定义角色和行为</span></div>
+          <textarea>你是一个专业的企业知识库问答助手。请基于提供的知识库内容准确回答，如果无法找到相关信息，请明确告知用户。回答时标注引用来源。</textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Retrieval -->
+    <div class="ag-grp">
+      <div class="ag-grp-h" onclick="toggleGrp(this)">
+        <span class="gt"><span class="gi">🔍</span> 检索参数</span>
+        <span class="ga open">▼</span>
+      </div>
+      <div class="ag-grp-b">
+        <div class="ag-fld">
+          <div class="fl"><label>相似度阈值</label><span class="desc">低于此分数的文档将被过滤</span></div>
+          <div class="slider-row">
+            <input type="range" min="0" max="100" value="65" oninput="this.nextElementSibling.textContent=(this.value/100).toFixed(2)" />
+            <span class="sv">0.65</span>
+          </div>
+        </div>
+        <div class="ag-fld">
+          <div class="fl"><label>最大检索数量（Top-K）</label><span class="desc">每次检索返回的文档片段数</span></div>
+          <div class="slider-row">
+            <input type="range" min="1" max="20" value="5" oninput="this.nextElementSibling.textContent=this.value" />
+            <span class="sv">5</span>
+          </div>
+        </div>
+        <div class="ag-fld">
+          <div class="fl"><label>上下文记忆长度</label><span class="desc">AI 可参考的最近对话轮数</span></div>
+          <div class="slider-row">
+            <input type="range" min="1" max="20" value="6" oninput="this.nextElementSibling.textContent=this.value+' 轮'" />
+            <span class="sv">6 轮</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Style -->
+    <div class="ag-grp">
+      <div class="ag-grp-h" onclick="toggleGrp(this)">
+        <span class="gt"><span class="gi">🎨</span> 回答风格</span>
+        <span class="ga open">▼</span>
+      </div>
+      <div class="ag-grp-b">
+        <div class="ag-fld">
+          <div class="fl"><label>风格偏好</label><span class="desc">影响回答的语气和详略程度</span></div>
+          <div class="radio-g">
+            <label class="act" onclick="pickStyle(this)"><input type="radio" name="style" checked />严谨专业</label>
+            <label onclick="pickStyle(this)"><input type="radio" name="style" />简洁精准</label>
+            <label onclick="pickStyle(this)"><input type="radio" name="style" />通俗易懂</label>
+          </div>
+        </div>
+        <div class="ag-fld">
+          <div class="fl"><label>引用格式</label><span class="desc">回答中引用来源的展示方式</span></div>
+          <select><option>脚注 [1][2]</option><option>链接样式</option><option>文末汇总</option><option>不显示引用</option></select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Data Sources -->
+    <div class="ag-grp">
+      <div class="ag-grp-h" onclick="toggleGrp(this)">
+        <span class="gt"><span class="gi">📚</span> 知识库数据源</span>
+        <span class="ga open">▼</span>
+      </div>
+      <div class="ag-grp-b">
+        <div class="ag-fld">
+          <div class="fl"><label>启用知识库</label><span class="desc">勾选 Agent 可检索的数据源</span></div>
+          <div class="kb-chk">
+            <label class="chk" onclick="toggleKbChk(this)"><input type="checkbox" checked />💳 财务报告</label>
+            <label class="chk" onclick="toggleKbChk(this)"><input type="checkbox" checked />👥 人力资源</label>
+            <label class="chk" onclick="toggleKbChk(this)"><input type="checkbox" checked />⚙️ 技术文档</label>
+            <label onclick="toggleKbChk(this)"><input type="checkbox" />📋 法务合规</label>
+            <label onclick="toggleKbChk(this)"><input type="checkbox" />📦 产品手册</label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Limits -->
+    <div class="ag-grp">
+      <div class="ag-grp-h" onclick="toggleGrp(this)">
+        <span class="gt"><span class="gi">⚡</span> 调用限制</span>
+        <span class="ga open">▼</span>
+      </div>
+      <div class="ag-grp-b">
+        <div class="ag-fld">
+          <div class="fl"><label>单次回答最大 Token</label><span class="desc">限制每次生成的最大长度</span></div>
+          <div class="slider-row">
+            <input type="range" min="256" max="4096" value="2048" step="256" oninput="this.nextElementSibling.textContent=this.value" />
+            <span class="sv">2048</span>
+          </div>
+        </div>
+        <div class="ag-fld">
+          <div class="fl"><label>每分钟请求上限（RPM）</label><span class="desc"> API 调用频率限制</span></div>
+          <div class="slider-row">
+            <input type="range" min="10" max="200" value="60" step="10" oninput="this.nextElementSibling.textContent=this.value" />
+            <span class="sv">60</span>
+          </div>
+        </div>
+        <div class="ag-fld">
+          <div class="fl"><label>超时时间（秒）</label></div>
+          <select><option>30s</option><option selected>60s</option><option>120s</option><option>300s</option></select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="ag-acts">
+      <button class="btn btn-primary" onclick="showToast('配置已保存')">💾 保存配置</button>
+      <button class="btn btn-outline" onclick="showToast('已重置为默认值')">↺ 重置</button>
+    </div>
+  </div>
+</div>
+
 <!-- Source Trace Modal -->
 <div class="src-m" id="srcM" onclick="if(event.target===this)closeSrc()">
   <div class="src-b">
@@ -547,6 +717,11 @@ document.querySelectorAll('.dir-it[draggable]').forEach(el=>{
   el.addEventListener('drop',function(){el.style.background='';showToast('已移动')});
 });
 document.addEventListener('click',function(e){if(e.target.closest('.chunk-tag')){document.querySelectorAll('.chunk-tag').forEach(t=>t.classList.remove('act'));e.target.closest('.chunk-tag').classList.add('act')}});
+
+// ── Agent Config ──
+function toggleGrp(el){const b=el.nextElementSibling,a=el.querySelector('.ga');b.classList.toggle('hide');a.classList.toggle('open')}
+function pickStyle(el){document.querySelectorAll('.radio-g label').forEach(l=>l.classList.remove('act'));el.classList.add('act')}
+function toggleKbChk(el){el.classList.toggle('chk')}
 </script>
 </body>
 </html>
