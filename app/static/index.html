@@ -150,6 +150,76 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 
 @media (max-width:1100px){.stat-row{grid-template-columns:repeat(2,1fr)}.row-2{grid-template-columns:1fr}}
 @media (max-width:680px){.stat-row{grid-template-columns:1fr}.dash{padding:16px}.hdr{padding:0 16px}}
+
+/* ── Doc Management Page ── */
+.doc-page{flex:1;display:flex;overflow:hidden}
+.doc-page .dir-panel{width:260px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow:hidden}
+.doc-page .dir-hdr{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--border)}
+.doc-page .dir-hdr h3{font-size:13px;font-weight:600}
+.doc-page .dir-tree{flex:1;overflow-y:auto;padding:6px 8px}
+.dir-it{padding:5px 8px;border-radius:4px;cursor:pointer;display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-secondary);transition:all var(--transition);margin-bottom:1px}
+.dir-it:hover{background:var(--surface-hover);color:var(--text)}
+.dir-it.act{background:var(--primary-light);color:var(--primary);font-weight:600}
+.dir-it .ar{font-size:10px;width:14px;text-align:center;flex-shrink:0;transition:transform var(--transition)}
+.dir-it .ar.ex{transform:rotate(90deg)}
+.dir-it .ic{font-size:14px;flex-shrink:0}
+.dir-it .nm{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dir-it .ct{font-size:11px;color:var(--text-muted)}
+.dir-it .act-row{display:none;gap:2px;margin-left:auto}
+.dir-it:hover .act-row{display:flex}
+.dir-sub{padding-left:24px}
+.dir-add{padding:6px 10px;margin:4px 8px;border:1px dashed var(--border);border-radius:4px;text-align:center;font-size:12px;color:var(--text-muted);cursor:pointer;transition:all var(--transition)}
+.dir-add:hover{border-color:var(--primary);color:var(--primary);background:var(--primary-subtle)}
+
+.doc-page .main-panel{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.doc-toolbar{padding:12px 20px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;border-bottom:1px solid var(--border);background:var(--surface)}
+.doc-toolbar .search-s{display:flex;align-items:center;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:0 10px;width:240px;transition:border-color var(--transition)}
+.doc-toolbar .search-s:focus-within{border-color:var(--primary);box-shadow:0 0 0 2px var(--primary-light)}
+.doc-toolbar .search-s input{flex:1;border:none;background:transparent;padding:6px 0;font-size:13px;color:var(--text);outline:none;font-family:var(--font)}
+.doc-toolbar .search-s .ic{color:var(--text-muted);font-size:13px;margin-right:4px}
+.doc-toolbar .spacer{flex:1}
+.doc-table-wrap{flex:1;overflow:auto;padding:0 20px}
+.doc-table{width:100%;border-collapse:collapse;font-size:13px}
+.doc-table th{text-align:left;padding:10px 8px;font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid var(--divider);position:sticky;top:0;background:var(--bg);z-index:2}
+.doc-table td{padding:10px 8px;border-bottom:1px solid var(--divider);color:var(--text-secondary)}
+.doc-table tr:hover td{background:var(--surface-hover)}
+.doc-table td:first-child{width:30px}
+.doc-table td:nth-child(2){color:var(--text);font-weight:500}
+.doc-table input[type=checkbox]{width:14px;height:14px;accent-color:var(--primary);cursor:pointer}
+.prog-bar{width:80px;height:5px;background:var(--border-light);border-radius:3px;overflow:hidden;display:inline-block;vertical-align:middle}
+.prog-bar .fill{height:100%;border-radius:3px;transition:width 0.6s ease}
+.prog-bar .fill.done{background:var(--success)}
+.prog-bar .fill.ing{background:var(--warning)}
+.doc-format{display:inline-block;padding:1px 7px;border-radius:4px;font-size:11px;font-weight:600;background:var(--primary-subtle);color:var(--primary)}
+.doc-pagination{display:flex;align-items:center;justify-content:space-between;padding:12px 20px 16px;border-top:1px solid var(--border);background:var(--surface);font-size:12px;color:var(--text-muted)}
+.doc-pagination .pg{display:flex;gap:4px}
+.doc-pagination .pg button{min-width:28px;height:28px;border:1px solid var(--border);border-radius:4px;background:var(--surface);color:var(--text-secondary);cursor:pointer;font-size:12px;transition:all var(--transition);font-family:var(--font)}
+.doc-pagination .pg button:hover{border-color:var(--primary);color:var(--primary)}
+.doc-pagination .pg button.act{background:var(--primary);border-color:var(--primary);color:#fff}
+.doc-pagination .info{font-size:12px;color:var(--text-muted)}
+
+/* ── Doc Preview Modal ── */
+.preview-modal{position:fixed;inset:0;background:rgba(0,0,0,0.35);z-index:100;display:none;align-items:center;justify-content:center;backdrop-filter:blur(2px)}
+.preview-modal.show{display:flex}
+.preview-box{background:var(--surface);border-radius:var(--radius-panel);width:720px;max-height:84vh;display:flex;flex-direction:column;box-shadow:0 16px 48px rgba(0,0,0,0.15);animation:modalIn 0.25s ease}
+@keyframes modalIn{from{opacity:0;transform:translateY(16px) scale(0.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+.preview-hdr{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 12px;border-bottom:1px solid var(--border)}
+.preview-hdr .info{display:flex;align-items:center;gap:8px;min-width:0}
+.preview-hdr .info .name{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.preview-hdr .info .tag{font-size:11px;padding:1px 8px;border-radius:10px;background:var(--primary-subtle);color:var(--primary)}
+.preview-body{flex:1;overflow-y:auto;padding:16px 20px}
+.preview-meta{display:flex;gap:20px;margin-bottom:14px;font-size:12px;color:var(--text-secondary)}
+.preview-meta span{display:flex;align-items:center;gap:4px}
+.preview-content{background:var(--bg);border:1px solid var(--border-light);border-radius:6px;padding:14px 16px;font-size:13px;line-height:1.8;white-space:pre-wrap;font-family:var(--font);color:var(--text-secondary);max-height:300px;overflow-y:auto}
+.preview-chunks{margin-top:14px}
+.preview-chunks h4{font-size:12px;font-weight:600;color:var(--text-muted);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.chunk-list{display:flex;flex-wrap:wrap;gap:6px}
+.chunk-tag{padding:4px 12px;border:1px solid var(--border);border-radius:4px;font-size:11px;cursor:pointer;color:var(--text-secondary);transition:all var(--transition);display:flex;align-items:center;gap:4px}
+.chunk-tag:hover{border-color:var(--primary);color:var(--primary);background:var(--primary-subtle)}
+.chunk-tag.act{border-color:var(--primary);background:var(--primary-light);color:var(--primary);font-weight:600}
+.chunk-tag .ck-ic{font-size:10px}
+.preview-footer{display:flex;justify-content:flex-end;gap:8px;padding:12px 20px 16px;border-top:1px solid var(--border)}
+
 </style>
 </head>
 <body>
@@ -168,7 +238,7 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
     <div class="nav-g">
       <div class="nav-g-t">知识库</div>
       <div class="nav-it"><span class="ic">📚</span>全部知识库<span class="ct">12</span></div>
-      <div class="nav-it"><span class="ic">📄</span>文档管理<span class="ct">48</span></div>
+      <div class="nav-it" data-page="docs"><span class="ic">📄</span>文档管理<span class="ct">48</span></div>
       <div class="nav-it"><span class="ic">🔍</span>向量检索</div>
       <div class="nav-it"><span class="ic">🏷️</span>标签分类</div>
     </div>
@@ -328,6 +398,108 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
     </div>
   </div>
 
+  <!-- ── Document Management Page ── -->
+  <div class="page" id="page-docs">
+    <div class="doc-page">
+      <!-- Tree Panel -->
+      <div class="dir-panel">
+        <div class="dir-hdr">
+          <h3>分类目录</h3>
+          <button class="icon-btn" style="width:26px;height:26px;font-size:14px" onclick="addFolder()" title="新建分类">＋</button>
+        </div>
+        <div class="dir-tree" id="dirTree">
+          <div class="dir-it act"><span class="ar ex">▶</span><span class="ic">📂</span><span class="nm">全部文档</span><span class="ct">48</span></div>
+          <div class="dir-sub">
+            <div class="dir-it" draggable="true"><span class="ar ex">▶</span><span class="ic">📂</span><span class="nm">财务报告</span><span class="ct">12</span><span class="act-row"><button class="icon-btn" style="width:20px;height:20px;font-size:10px">✎</button></span></div>
+            <div class="dir-sub">
+              <div class="dir-it" draggable="true"><span class="ic">📁</span><span class="nm">2024 年报</span><span class="ct">5</span></div>
+              <div class="dir-it" draggable="true"><span class="ic">📁</span><span class="nm">2025 季报</span><span class="ct">7</span></div>
+            </div>
+            <div class="dir-it" draggable="true"><span class="ar">▶</span><span class="ic">📂</span><span class="nm">人力资源</span><span class="ct">8</span></div>
+            <div class="dir-sub">
+              <div class="dir-it" draggable="true"><span class="ic">📁</span><span class="nm">员工手册</span><span class="ct">4</span></div>
+              <div class="dir-it" draggable="true"><span class="ic">📁</span><span class="nm">薪酬绩效</span><span class="ct">4</span></div>
+            </div>
+            <div class="dir-it" draggable="true"><span class="ar ex">▶</span><span class="ic">📂</span><span class="nm">技术文档</span><span class="ct">15</span></div>
+            <div class="dir-sub">
+              <div class="dir-it" draggable="true"><span class="ic">📁</span><span class="nm">API 规范</span><span class="ct">6</span></div>
+              <div class="dir-it" draggable="true"><span class="ic">📁</span><span class="nm">架构设计</span><span class="ct">9</span></div>
+            </div>
+            <div class="dir-it" draggable="true"><span class="ic">📂</span><span class="nm">法务合规</span><span class="ct">5</span></div>
+            <div class="dir-it" draggable="true"><span class="ic">📂</span><span class="nm">产品手册</span><span class="ct">8</span></div>
+          </div>
+          <div class="dir-add" onclick="addFolder()">＋ 新建分类</div>
+        </div>
+      </div>
+
+      <!-- Main Panel -->
+      <div class="main-panel">
+        <div class="doc-toolbar">
+          <div class="search-s"><span class="ic">🔍</span><input placeholder="搜索文件名..." oninput="filterDocs(this.value)" /></div>
+          <button class="btn btn-outline btn-sm" onclick="document.getElementById('uploadDocs').click()">📄 上传文档</button>
+          <button class="btn btn-outline btn-sm" onclick="batchDel()">🗑 删除</button>
+          <button class="btn btn-outline btn-sm" onclick="showToast('已提交分词重索引任务')">🔄 重索引</button>
+          <input type="file" id="uploadDocs" multiple style="display:none" onchange="showToast('上传 ' + this.files.length + ' 个文件')" />
+          <span class="spacer"></span>
+          <span style="font-size:12px;color:var(--text-muted)">共 48 篇文档</span>
+        </div>
+        <div class="doc-table-wrap">
+          <table class="doc-table" id="docTable">
+            <thead><tr>
+              <th><input type="checkbox" onchange="toggleAll(this)" /></th>
+              <th>文件名</th><th>格式</th><th>大小</th><th>上传时间</th><th>分类</th><th>索引状态</th><th>向量进度</th><th>操作</th>
+            </tr></thead>
+            <tbody>
+              <tr><td><input type="checkbox" /></td>
+                <td>LangFlow_2024_年度财务报告</td><td><span class="doc-format">TXT</span></td><td>2.4 MB</td><td>2025-06-17</td><td>财务报告</td><td><span class="st-tag suc">已索引</span></td>
+                <td><span class="prog-bar"><span class="fill done" style="width:100%"></span></span> 12/12</td>
+                <td><button class="icon-btn" style="width:24px;height:24px;font-size:12px" onclick="previewDoc()">👁️</button></td>
+              </tr>
+              <tr><td><input type="checkbox" /></td>
+                <td>员工入职培训手册_2025</td><td><span class="doc-format">MD</span></td><td>1.1 MB</td><td>2025-06-15</td><td>人力资源</td><td><span class="st-tag suc">已索引</span></td>
+                <td><span class="prog-bar"><span class="fill done" style="width:100%"></span></span> 8/8</td>
+                <td><button class="icon-btn" style="width:24px;height:24px;font-size:12px" onclick="previewDoc()">👁️</button></td>
+              </tr>
+              <tr><td><input type="checkbox" /></td>
+                <td>RESTful_API_设计规范_v3.2</td><td><span class="doc-format">MD</span></td><td>3.6 MB</td><td>2025-06-14</td><td>技术文档</td><td><span class="st-tag pen">索引中</span></td>
+                <td><span class="prog-bar"><span class="fill ing" style="width:60%"></span></span> 9/15</td>
+                <td><button class="icon-btn" style="width:24px;height:24px;font-size:12px" onclick="previewDoc()">👁️</button></td>
+              </tr>
+              <tr><td><input type="checkbox" /></td>
+                <td>数据安全合规政策_2025Q2</td><td><span class="doc-format">TXT</span></td><td>0.8 MB</td><td>2025-06-12</td><td>法务合规</td><td><span class="st-tag suc">已索引</span></td>
+                <td><span class="prog-bar"><span class="fill done" style="width:100%"></span></span> 6/6</td>
+                <td><button class="icon-btn" style="width:24px;height:24px;font-size:12px" onclick="previewDoc()">👁️</button></td>
+              </tr>
+              <tr><td><input type="checkbox" /></td>
+                <td>AI Agent 开发指南</td><td><span class="doc-format">MD</span></td><td>5.2 MB</td><td>2025-06-10</td><td>技术文档</td><td><span class="st-tag suc">已索引</span></td>
+                <td><span class="prog-bar"><span class="fill done" style="width:100%"></span></span> 21/21</td>
+                <td><button class="icon-btn" style="width:24px;height:24px;font-size:12px" onclick="previewDoc()">👁️</button></td>
+              </tr>
+              <tr><td><input type="checkbox" /></td>
+                <td>2025Q1_产品路线图</td><td><span class="doc-format">PDF</span></td><td>4.1 MB</td><td>2025-06-08</td><td>产品手册</td><td><span class="st-tag suc">已索引</span></td>
+                <td><span class="prog-bar"><span class="fill done" style="width:100%"></span></span> 14/14</td>
+                <td><button class="icon-btn" style="width:24px;height:24px;font-size:12px" onclick="previewDoc()">👁️</button></td>
+              </tr>
+              <tr><td><input type="checkbox" /></td>
+                <td>薪酬结构调整方案_2025</td><td><span class="doc-format">TXT</span></td><td>0.6 MB</td><td>2025-06-05</td><td>人力资源</td><td><span class="st-tag pen">索引中</span></td>
+                <td><span class="prog-bar"><span class="fill ing" style="width:30%"></span></span> 1/4</td>
+                <td><button class="icon-btn" style="width:24px;height:24px;font-size:12px" onclick="previewDoc()">👁️</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="doc-pagination">
+          <div class="info">显示 1-7 条，共 48 条</div>
+          <div class="pg">
+            <button disabled>‹</button>
+            <button class="act">1</button><button>2</button><button>3</button><button>…</button><button>7</button>
+            <button>›</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- ── Chat Page ── -->
   <div class="page chat-page" id="page-chat">
     <div class="chat-main">
@@ -358,6 +530,60 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 </div>
 <div class="toast" id="toast"></div>
 
+<!-- Preview Modal -->
+<div class="preview-modal" id="previewModal" onclick="if(event.target===this)closePreview()">
+  <div class="preview-box">
+    <div class="preview-hdr">
+      <div class="info">
+        <span class="name" id="pvName">LangFlow_2024_年度财务报告.txt</span>
+        <span class="tag">已索引</span>
+      </div>
+      <button class="icon-btn" onclick="closePreview()">✕</button>
+    </div>
+    <div class="preview-body">
+      <div class="preview-meta">
+        <span>📄 TXT</span><span>📏 2.4 MB</span><span>📅 2025-06-17</span><span>🔗 12 个片段</span><span>📂 财务报告</span>
+      </div>
+      <div class="preview-content" id="pvContent">LangFlow 科技公司 2024 年度运营报告
+
+一、公司概况
+LangFlow 科技成立于 2020 年，总部位于中国深圳，专注于人工智能基础软件研发。
+公司核心产品为 LangFlow AI 开发平台，提供从模型训练到部署上线的全链路工具链。
+截至 2024 年底，公司员工总数达到 1200 人，其中研发人员占比 75%。
+
+二、财务表现
+2024 年公司实现营业收入 12.8 亿元，同比增长 67%。
+净利润达到 2.1 亿元，较 2023 年增长 89%。
+
+三、研发投入
+2024 年研发投入 4.2 亿元，占营收比重 32.8%。
+主要投入方向包括：多模态 AI 引擎、Agent 开发框架升级、安全与合规系统建设。</div>
+      <div class="preview-chunks">
+        <h4>🔗 分段索引 <span style="font-weight:400;color:var(--text-muted)">(12 段)</span></h4>
+        <div class="chunk-list">
+          <span class="chunk-tag act"><span class="ck-ic">📄</span>#1 公司概况</span>
+          <span class="chunk-tag"><span class="ck-ic">📄</span>#2 财务表现·营收</span>
+          <span class="chunk-tag"><span class="ck-ic">📄</span>#3 财务表现·利润</span>
+          <span class="chunk-tag"><span class="ck-ic">📄</span>#4 研发投入</span>
+          <span class="chunk-tag"><span class="ck-ic">📄</span>#5 产品发布·3.0</span>
+          <span class="chunk-tag"><span class="ck-ic">📄</span>#6 产品发布·SDK</span>
+          <span class="chunk-tag"><span class="ck-ic">📄</span>#7 产品发布·Cloud</span>
+          <span class="chunk-tag"><span class="ck-ic">📄</span>#8 客户·金融</span>
+          <span class="chunk-tag"><span class="ck-ic">📄</span>#9 客户·医疗</span>
+          <span class="chunk-tag"><span class="ck-ic">📄</span>#10 客户·制造</span>
+          <span class="chunk-tag"><span class="ck-ic">📄</span>#11 员工福利·假期</span>
+          <span class="chunk-tag"><span class="ck-ic">📄</span>#12 员工福利·培训</span>
+        </div>
+      </div>
+    </div>
+    <div class="preview-footer">
+      <button class="btn btn-outline" onclick="closePreview()">关闭</button>
+      <button class="btn btn-outline btn-sm" onclick="showToast('已导出文档')">⬇ 导出</button>
+      <button class="btn btn-primary btn-sm" onclick="showToast('已提交重索引')">🔄 重新索引</button>
+    </div>
+  </div>
+</div>
+
 <script>
 let dark=false,sid=true;
 function toggleSide(){sid=!sid;document.getElementById('side').classList.toggle('hide')}
@@ -372,14 +598,6 @@ function showToast(m){
 }
 
 // ── Page Navigation ──
-document.querySelectorAll('.nav-it[data-page]').forEach(el=>{
-  el.addEventListener('click',()=>{
-    document.querySelectorAll('.nav-it').forEach(n=>n.classList.remove('act'));
-    el.classList.add('act');
-    document.querySelectorAll('.page').forEach(p=>p.classList.remove('act'));
-    document.getElementById('page-'+el.dataset.page).classList.add('act');
-  })
-})
 
 // ── Chat ──
 let sessionId='web-'+Date.now();
@@ -404,6 +622,31 @@ async function sendMsg(btn){
 function chatKey(e){
   if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMsg(e.target.parentElement.querySelector('button'))}
 }
+// ── Doc Management ──
+function addFolder(){const n=prompt('输入分类名称：');if(n)showToast('已创建分类：'+n)}
+function filterDocs(q){document.querySelectorAll('#docTable tbody tr').forEach(r=>{r.style.display=r.textContent.includes(q)?'':'none'})}
+function toggleAll(cb){document.querySelectorAll('#docTable tbody input[type=checkbox]').forEach(c=>c.checked=cb.checked)}
+function batchDel(){const n=document.querySelectorAll('#docTable tbody input[type=checkbox]:checked').length;if(n)showToast('已删除 '+n+' 篇文档');else showToast('请先选择文档')}
+function previewDoc(){document.getElementById('previewModal').classList.add('show')}
+function closePreview(){document.getElementById('previewModal').classList.remove('show')}
+document.querySelectorAll('.dir-it[draggable]').forEach(el=>{
+  el.addEventListener('dragstart',()=>el.style.opacity='.4');
+  el.addEventListener('dragend',()=>el.style.opacity='1');
+  el.addEventListener('dragover',e=>{e.preventDefault();el.style.background='var(--primary-light)'});
+  el.addEventListener('dragleave',()=>el.style.background='');
+  el.addEventListener('drop',function(){el.style.background='';showToast('已移动')});
+});
+document.addEventListener('click',function(e){if(e.target.closest('.chunk-tag')){document.querySelectorAll('.chunk-tag').forEach(t=>t.classList.remove('act'));e.target.closest('.chunk-tag').classList.add('act')}});
+
+// ── Page Navigation ──
+document.querySelectorAll('.nav-it[data-page]').forEach(el=>{
+  el.addEventListener('click',()=>{
+    document.querySelectorAll('.nav-it').forEach(n=>n.classList.remove('act'));
+    el.classList.add('act');
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('act'));
+    document.getElementById('page-'+el.dataset.page).classList.add('act');
+  })
+})
 </script>
 </body>
 </html>
