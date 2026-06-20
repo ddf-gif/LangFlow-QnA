@@ -255,45 +255,100 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 .chunk-tag:hover{border-color:var(--primary);color:var(--primary);background:var(--primary-subtle)}
 .chunk-tag.act{border-color:var(--primary);background:var(--primary-light);color:var(--primary);font-weight:600}
 .preview-footer{display:flex;justify-content:flex-end;gap:8px;padding:12px 20px 16px;border-top:1px solid var(--border)}
+/* ── Permissions ── */
+.perm-wrap{display:flex;flex:1;overflow:hidden}
+.perm-wrap .pl{width:200px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0}
+.perm-wrap .pl-h{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--border)}
+.perm-wrap .pl-h h3{font-size:13px;font-weight:600}
+.perm-wrap .pl-l{flex:1;overflow-y:auto;padding:6px 8px}
+.perm-wrap .pl-l .ri{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:4px;cursor:pointer;font-size:12px;color:var(--text-secondary);margin-bottom:2px}
+.perm-wrap .pl-l .ri:hover{background:var(--surface-hover);color:var(--text)}
+.perm-wrap .pl-l .ri.act{background:var(--primary-light);color:var(--primary);font-weight:600}
+.perm-wrap .pl-l .ri .ic{font-size:14px}
+.perm-wrap .pl-l .ri .nm{flex:1}
+.perm-wrap .pl-l .ri .ct{font-size:10px;color:var(--text-muted)}
+.perm-wrap .pr{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.perm-wrap .pr-h{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-bottom:1px solid var(--border);flex-shrink:0}
+.perm-wrap .pr-h h3{font-size:14px;font-weight:600}
+.perm-wrap .pr-h .hint{font-size:11px;color:var(--text-muted)}
+.perm-wrap .pr-t{flex:1;overflow:auto;padding:0 20px}
+.perm-wrap .pr-t table{width:100%;border-collapse:collapse;font-size:13px}
+.perm-wrap .pr-t th{text-align:left;padding:9px 8px;font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid var(--divider);position:sticky;top:0;background:var(--bg);z-index:2}
+.perm-wrap .pr-t td{padding:9px 8px;border-bottom:1px solid var(--divider);color:var(--text-secondary)}
+.perm-wrap .pr-t tr:hover td{background:var(--surface-hover)}
+.perm-wrap .pr-t td:first-child{color:var(--text);font-weight:500}
+.perm-wrap .pr-t .perm-tag{display:inline-block;padding:1px 7px;border-radius:10px;font-size:11px;font-weight:500}
+.perm-wrap .pr-t .perm-tag.r{background:rgba(76,175,132,0.1);color:var(--success)}
+.perm-wrap .pr-t .perm-tag.w{background:rgba(232,168,76,0.1);color:var(--warning)}
+.perm-wrap .pr-t .perm-tag.x{background:rgba(74,123,167,0.1);color:var(--primary)}
+/* Permission modal */
+.perm-m{position:fixed;inset:0;background:rgba(0,0,0,0.35);z-index:100;display:none;align-items:center;justify-content:center;backdrop-filter:blur(2px)}
+.perm-m.show{display:flex}
+.perm-b{background:var(--surface);border-radius:var(--radius-panel);width:480px;max-height:80vh;display:flex;flex-direction:column;box-shadow:0 16px 48px rgba(0,0,0,0.15);animation:sI .25s ease}
+.perm-h{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 12px;border-bottom:1px solid var(--border)}
+.perm-h h3{font-size:14px;font-weight:600}
+.perm-bd{flex:1;overflow-y:auto;padding:14px 20px}
+.perm-bd .pf{margin-bottom:12px}
+.perm-bd .pf:last-child{margin-bottom:0}
+.perm-bd .pf .fl{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.perm-bd .pf .fl .l{font-size:13px;font-weight:500;color:var(--text)}
+.perm-bd .pf .fl .h{font-size:11px;color:var(--text-muted)}
+.perm-bd .pf input[type=text],.perm-bd .pf select{width:100%;padding:6px 10px;border:1px solid var(--border);border-radius:4px;font-size:13px;outline:none;font-family:var(--font);color:var(--text);background:var(--bg);box-sizing:border-box}
+.perm-bd .pf input:focus,.perm-bd .pf select:focus{border-color:var(--primary);box-shadow:0 0 0 2px var(--primary-light)}
+.perm-bd .pt{font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin:12px 0 6px}
+.perm-bd .pg{display:flex;flex-direction:column;gap:6px}
+.perm-bd .pg .po{display:flex;align-items:center;gap:10px;padding:7px 10px;border:1px solid var(--border);border-radius:4px;cursor:pointer;font-size:12px;transition:all var(--transition)}
+.perm-bd .pg .po:hover{border-color:var(--primary-light);background:var(--primary-subtle)}
+.perm-bd .pg .po.chk{border-color:var(--primary);background:var(--primary-subtle)}
+.perm-bd .pg .po .cb{width:15px;height:15px;border:2px solid var(--border);border-radius:3px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:7px;color:transparent}
+.perm-bd .pg .po.chk .cb{border-color:var(--primary);background:var(--primary);color:#fff}
+.perm-bd .pg .po .kn{font-size:12px;color:var(--text)}
+.perm-bd .pg .po .kp{display:flex;gap:4px;margin-left:auto}
+.perm-bd .pg .po .kp .kt{font-size:10px;padding:1px 6px;border-radius:8px;background:var(--border-light);color:var(--text-muted)}
+.perm-bd .pg .po.chk .kp .kt{background:var(--primary-subtle);color:var(--primary)}
+.perm-f{display:flex;justify-content:flex-end;gap:8px;padding:12px 20px 16px;border-top:1px solid var(--border)}
+
 /* ── Agent Config ── */
-#page-agent.act{position:relative}
-#page-agent.act .ag-wrap{position:absolute;inset:0;overflow-y:auto;padding:16px 28px 24px;max-width:720px;width:100%;margin:0 auto;box-sizing:border-box}
-.ag-hdr{margin-bottom:14px}
-.ag-hdr h1{font-size:17px;font-weight:600}
-.ag-hdr p{font-size:12px;color:var(--text-muted);margin-top:1px}
-.ag-c{background:var(--surface);border:1px solid var(--border);border-radius:6px;margin-bottom:8px;overflow:hidden}
-.ag-ch{display:flex;align-items:center;justify-content:space-between;padding:9px 14px;cursor:pointer;user-select:none}
+.ag-wrap{flex:1;overflow-y:auto;padding:22px 28px 80px;width:100%;max-width:760px;margin:0 auto;box-sizing:border-box}
+.ag-hdr{margin-bottom:16px}
+.ag-hdr h1{font-size:18px;font-weight:600;display:flex;align-items:center;gap:8px}
+.ag-hdr p{font-size:12px;color:var(--text-muted);margin-top:3px}
+.ag-c{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-card);margin-bottom:12px;overflow:hidden;box-shadow:var(--shadow-sm);transition:box-shadow var(--transition)}
+.ag-c:hover{box-shadow:var(--shadow)}
+.ag-ch{display:flex;align-items:center;justify-content:space-between;padding:13px 18px;cursor:pointer;user-select:none}
 .ag-ch:hover{background:var(--surface-hover)}
-.ag-ch .ct{font-size:13px;font-weight:600;display:flex;align-items:center;gap:5px}
-.ag-ch .ct .ci{font-size:14px}
+.ag-ch .ct{font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px;color:var(--text)}
+.ag-ch .ct .ci{font-size:14px;width:22px;height:22px;display:flex;align-items:center;justify-content:center;background:var(--primary-light);color:var(--primary);border-radius:6px;flex-shrink:0}
 .ag-ch .ar{font-size:10px;color:var(--text-muted);transition:transform .2s}
 .ag-ch .ar.up{transform:rotate(180deg)}
-.ag-cb{padding:10px 14px 14px;border-top:1px solid var(--border)}
+.ag-cb{padding:16px 18px 18px;border-top:1px solid var(--border-light)}
 .ag-cb.hide{display:none}
-.ag-f{margin-bottom:10px}
+.ag-f{margin-bottom:16px}
 .ag-f:last-child{margin-bottom:0}
-.ag-f .fl{display:flex;align-items:center;justify-content:space-between;margin-bottom:3px}
-.ag-f .fl .l{font-size:13px;font-weight:500;color:var(--text)}
-.ag-f .fl .h{font-size:11px;color:var(--text-muted)}
-.ag-f input[type=text],.ag-f textarea,.ag-f select{width:100%;padding:6px 10px;border:1px solid var(--border);border-radius:4px;font-size:13px;outline:none;font-family:var(--font);color:var(--text);background:var(--bg);box-sizing:border-box}
-.ag-f input:focus,.ag-f textarea:focus,.ag-f select:focus{border-color:var(--primary);box-shadow:0 0 0 2px var(--primary-light)}
-.ag-f textarea{min-height:68px;resize:vertical;line-height:1.5}
-.ag-f .sr{display:flex;align-items:center;gap:8px}
-.ag-f input[type=range]{flex:1;height:3px;-webkit-appearance:none;background:var(--border-light);border-radius:2px;outline:none}
-.ag-f input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;height:13px;border-radius:50%;background:var(--primary);cursor:pointer}
-.ag-f .sv{font-size:13px;font-weight:600;color:var(--primary);min-width:30px;text-align:right}
-.ag-f .rg{display:flex;gap:6px}
-.ag-f .rg .ro{display:flex;align-items:center;gap:3px;padding:4px 10px;border:1px solid var(--border);border-radius:4px;cursor:pointer;font-size:12px;color:var(--text-secondary)}
+.ag-f .fl{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:6px;gap:12px}
+.ag-f .fl .l{font-size:13px;font-weight:600;color:var(--text)}
+.ag-f .fl .h{font-size:11px;color:var(--text-muted);text-align:right}
+.ag-f input[type=text],.ag-f textarea,.ag-f select{width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:13px;outline:none;font-family:var(--font);color:var(--text);background:var(--bg);box-sizing:border-box;transition:border-color var(--transition),box-shadow var(--transition)}
+.ag-f input:focus,.ag-f textarea:focus,.ag-f select:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-light);background:var(--surface)}
+.ag-f textarea{min-height:92px;resize:vertical;line-height:1.6}
+.ag-f .sr{display:flex;align-items:center;gap:12px}
+.ag-f input[type=range]{flex:1;height:4px;-webkit-appearance:none;appearance:none;background:var(--border-light);border-radius:2px;outline:none;cursor:pointer}
+.ag-f input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:16px;height:16px;border-radius:50%;background:var(--primary);border:2px solid var(--surface);box-shadow:var(--shadow-sm);cursor:pointer}
+.ag-f input[type=range]::-moz-range-thumb{width:14px;height:14px;border:2px solid var(--surface);border-radius:50%;background:var(--primary);cursor:pointer}
+.ag-f .sv{font-size:13px;font-weight:600;color:var(--primary);min-width:48px;text-align:center;padding:3px 10px;background:var(--primary-light);border-radius:6px}
+.ag-f .rg{display:flex;gap:8px;flex-wrap:wrap}
+.ag-f .rg .ro{display:flex;align-items:center;gap:5px;padding:7px 14px;border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:12px;color:var(--text-secondary);transition:all var(--transition);font-weight:500}
 .ag-f .rg .ro:hover{border-color:var(--primary-light);background:var(--primary-subtle)}
 .ag-f .rg .ro.act{border-color:var(--primary);background:var(--primary-light);color:var(--primary);font-weight:600}
 .ag-f .rg .ro input{display:none}
-.ag-f .ck{display:flex;flex-wrap:wrap;gap:6px}
-.ag-f .ck .co{display:flex;align-items:center;gap:3px;padding:4px 10px;border:1px solid var(--border);border-radius:4px;cursor:pointer;font-size:12px;color:var(--text-secondary)}
-.ag-f .ck .co:hover{border-color:var(--primary-light)}
-.ag-f .ck .co.chk{border-color:var(--primary);background:var(--primary-subtle);color:var(--text)}
+.ag-f select{appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'><path fill='%238E9DB2' d='M6 8L2 4h8z'/></svg>");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px;cursor:pointer}
+.ag-f .ck{display:flex;flex-wrap:wrap;gap:8px}
+.ag-f .ck .co{display:flex;align-items:center;gap:6px;padding:7px 14px;border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:12px;color:var(--text-secondary);transition:all var(--transition);font-weight:500}
+.ag-f .ck .co:hover{border-color:var(--primary-light);background:var(--surface-hover)}
+.ag-f .ck .co.chk{border-color:var(--primary);background:var(--primary-light);color:var(--primary);font-weight:600}
 .ag-f .ck .co input{display:none}
-.ag-btns{display:flex;gap:8px;padding-top:4px}
-.ag-btns .btn{padding:6px 18px;font-size:12px}
+.ag-btns{display:flex;gap:10px;padding-top:6px}
+.ag-btns .btn{padding:8px 22px;font-size:13px}
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#1A2332;color:#fff;padding:10px 22px;border-radius:8px;font-size:13px;z-index:200;opacity:0;transition:all 0.35s cubic-bezier(0.16,1,0.3,1);pointer-events:none;font-family:var(--font)}
 .page{display:none}.page.act{display:flex;flex-direction:column;flex:1;overflow:hidden;min-height:0}
 
@@ -315,7 +370,7 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
     </div>
     <div class="nav-g"><div class="nav-g-t">管理</div>
       <div class="nav-it" data-page="agent"><span class="ic">⚙️</span>Agent 配置</div>
-      <div class="nav-it"><span class="ic">🔑</span>权限分组</div>
+      <div class="nav-it" data-page="perms"><span class="ic">🔑</span>权限分组</div>
       <div class="nav-it"><span class="ic">👤</span>角色管理</div>
     </div>
     <div class="nav-div"></div>
@@ -459,96 +514,142 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
       </div>
     </div>
   </div>
-</div>
-</div>
 
-<!-- ── Agent Config Page ── -->
-<div class="page" id="page-agent">
-  <div class="ag-wrap">
-    <div class="ag-hdr"><h1>⚙️ Agent 配置</h1><p>自定义 AI 问答助手的运行参数和行为风格</p></div>
+  <!-- ── Agent Config Page ── -->
+  <div class="page" id="page-agent">
+    <div class="ag-wrap">
+      <div class="ag-hdr"><h1>⚙️ Agent 配置</h1><p>自定义 AI 问答助手的运行参数和行为风格</p></div>
 
-    <div class="ag-c">
-      <div class="ag-ch" onclick="toggleGrp(this)">
-        <span class="ct"><span class="ci">🆔</span> 基本设置</span>
-        <span class="ar up">▼</span>
-      </div>
-      <div class="ag-cb">
-        <div class="ag-f">
-          <div class="fl"><span class="l">Agent 名称</span><span class="h">对外展示的助手名称</span></div>
-          <input type="text" value="LangFlow 知识库助手" />
+      <div class="ag-c">
+        <div class="ag-ch" onclick="toggleGrp(this)">
+          <span class="ct"><span class="ci">🆔</span> 基本设置</span>
+          <span class="ar up">▼</span>
         </div>
-        <div class="ag-f">
-          <div class="fl"><span class="l">专属提示词</span><span class="h">定义 AI 的角色和行为</span></div>
-          <textarea>你是一个专业的企业知识库问答助手。请基于提供的知识库内容准确回答，如果无法找到相关信息，请明确告知用户。回答时标注引用来源。</textarea>
-        </div>
-      </div>
-    </div>
-
-    <div class="ag-c">
-      <div class="ag-ch" onclick="toggleGrp(this)">
-        <span class="ct"><span class="ci">🔍</span> 检索参数</span>
-        <span class="ar up">▼</span>
-      </div>
-      <div class="ag-cb">
-        <div class="ag-f">
-          <div class="fl"><span class="l">相似度阈值</span><span class="h">低于此值的文档将被过滤</span></div>
-          <div class="sr"><input type="range" min="0" max="100" value="65" oninput="this.nextElementSibling.textContent=(this.value/100).toFixed(2)" /><span class="sv">0.65</span></div>
-        </div>
-        <div class="ag-f">
-          <div class="fl"><span class="l">最大检索数（Top-K）</span><span class="h">每次检索返回的片段数</span></div>
-          <div class="sr"><input type="range" min="1" max="20" value="5" oninput="this.nextElementSibling.textContent=this.value" /><span class="sv">5</span></div>
-        </div>
-        <div class="ag-f">
-          <div class="fl"><span class="l">上下文记忆长度</span><span class="h">AI 可参考的最近对话轮数</span></div>
-          <div class="sr"><input type="range" min="1" max="20" value="6" oninput="this.nextElementSibling.textContent=this.value+' 轮'" /><span class="sv">6 轮</span></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="ag-c">
-      <div class="ag-ch" onclick="toggleGrp(this)">
-        <span class="ct"><span class="ci">🎨</span> 回答风格</span>
-        <span class="ar up">▼</span>
-      </div>
-      <div class="ag-cb">
-        <div class="ag-f">
-          <div class="fl"><span class="l">风格偏好</span><span class="h">影响回答的语气和详略</span></div>
-          <div class="rg">
-            <span class="ro act" onclick="pickStyle(this)"><input type="radio" name="style" checked />严谨专业</span>
-            <span class="ro" onclick="pickStyle(this)"><input type="radio" name="style" />简洁精准</span>
-            <span class="ro" onclick="pickStyle(this)"><input type="radio" name="style" />通俗易懂</span>
+        <div class="ag-cb">
+          <div class="ag-f">
+            <div class="fl"><span class="l">Agent 名称</span><span class="h">对外展示的助手名称</span></div>
+            <input type="text" value="LangFlow 知识库助手" />
           </div>
-        </div>
-        <div class="ag-f">
-          <div class="fl"><span class="l">引用格式</span><span class="h">来源的展示方式</span></div>
-          <select><option>脚注 [1][2]</option><option>链接样式</option><option>文末汇总</option><option>不显示引用</option></select>
-        </div>
-      </div>
-    </div>
-
-    <div class="ag-c">
-      <div class="ag-ch" onclick="toggleGrp(this)">
-        <span class="ct"><span class="ci">📚</span> 知识库数据源</span>
-        <span class="ar up">▼</span>
-      </div>
-      <div class="ag-cb">
-        <div class="ag-f">
-          <div class="fl"><span class="l">启用知识库</span><span class="h">勾选 Agent 可检索的数据源</span></div>
-          <div class="ck">
-            <span class="co chk" onclick="toggleKB(this)"><input type="checkbox" checked />💳 财务报告</span>
-            <span class="co chk" onclick="toggleKB(this)"><input type="checkbox" checked />👥 人力资源</span>
-            <span class="co chk" onclick="toggleKB(this)"><input type="checkbox" checked />⚙️ 技术文档</span>
-            <span class="co" onclick="toggleKB(this)"><input type="checkbox" />📋 法务合规</span>
-            <span class="co" onclick="toggleKB(this)"><input type="checkbox" />📦 产品手册</span>
+          <div class="ag-f">
+            <div class="fl"><span class="l">专属提示词</span><span class="h">定义 AI 的角色与回答准则</span></div>
+            <textarea>你是一个专业的企业知识库问答助手。请基于提供的知识库内容准确回答，如果无法找到相关信息，请明确告知用户。回答时标注引用来源。</textarea>
           </div>
         </div>
       </div>
-    </div>
 
-    <div class="ag-btns">
-      <button class="btn btn-primary" onclick="showToast('配置已保存')">💾 保存配置</button>
-      <button class="btn btn-outline" onclick="showToast('已重置为默认值')">↺ 重置</button>
+      <div class="ag-c">
+        <div class="ag-ch" onclick="toggleGrp(this)">
+          <span class="ct"><span class="ci">🔍</span> 检索参数</span>
+          <span class="ar up">▼</span>
+        </div>
+        <div class="ag-cb">
+          <div class="ag-f">
+            <div class="fl"><span class="l">相似度阈值</span><span class="h">低于此值的文档将被过滤</span></div>
+            <div class="sr"><input type="range" min="0" max="100" value="65" oninput="this.nextElementSibling.textContent=(this.value/100).toFixed(2)" /><span class="sv">0.65</span></div>
+          </div>
+          <div class="ag-f">
+            <div class="fl"><span class="l">最大检索数（Top-K）</span><span class="h">每次检索返回的片段数</span></div>
+            <div class="sr"><input type="range" min="1" max="20" value="5" oninput="this.nextElementSibling.textContent=this.value" /><span class="sv">5</span></div>
+          </div>
+          <div class="ag-f">
+            <div class="fl"><span class="l">上下文记忆长度</span><span class="h">AI 可参考的最近对话轮数</span></div>
+            <div class="sr"><input type="range" min="1" max="20" value="6" oninput="this.nextElementSibling.textContent=this.value+' 轮'" /><span class="sv">6 轮</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ag-c">
+        <div class="ag-ch" onclick="toggleGrp(this)">
+          <span class="ct"><span class="ci">🎨</span> 回答风格</span>
+          <span class="ar up">▼</span>
+        </div>
+        <div class="ag-cb">
+          <div class="ag-f">
+            <div class="fl"><span class="l">风格偏好</span><span class="h">影响回答的语气与详略</span></div>
+            <div class="rg">
+              <span class="ro act" onclick="pickStyle(this)"><input type="radio" name="style" checked />严谨专业</span>
+              <span class="ro" onclick="pickStyle(this)"><input type="radio" name="style" />简洁精准</span>
+              <span class="ro" onclick="pickStyle(this)"><input type="radio" name="style" />通俗易懂</span>
+            </div>
+          </div>
+          <div class="ag-f">
+            <div class="fl"><span class="l">引用格式</span><span class="h">来源信息的展示方式</span></div>
+            <select><option>脚注 [1][2]</option><option>链接样式</option><option>文末汇总</option><option>不显示引用</option></select>
+          </div>
+        </div>
+      </div>
+
+      <div class="ag-c">
+        <div class="ag-ch" onclick="toggleGrp(this)">
+          <span class="ct"><span class="ci">📚</span> 知识库数据源</span>
+          <span class="ar up">▼</span>
+        </div>
+        <div class="ag-cb">
+          <div class="ag-f">
+            <div class="fl"><span class="l">启用知识库</span><span class="h">勾选 Agent 可检索的数据源</span></div>
+            <div class="ck">
+              <span class="co chk" onclick="toggleKB(this)"><input type="checkbox" checked />💳 财务报告</span>
+              <span class="co chk" onclick="toggleKB(this)"><input type="checkbox" checked />👥 人力资源</span>
+              <span class="co chk" onclick="toggleKB(this)"><input type="checkbox" checked />⚙️ 技术文档</span>
+              <span class="co" onclick="toggleKB(this)"><input type="checkbox" />📋 法务合规</span>
+              <span class="co" onclick="toggleKB(this)"><input type="checkbox" />📦 产品手册</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ag-btns">
+        <button class="btn btn-primary" onclick="showToast('配置已保存')">💾 保存配置</button>
+        <button class="btn btn-outline" onclick="showToast('已重置为默认值')">↺ 重置</button>
+      </div>
     </div>
+  </div>
+</div>
+
+<!-- ── Permissions Page ── -->
+<div class="page" id="page-perms">
+  <div class="perm-wrap">
+    <div class="pl">
+      <div class="pl-h"><h3>🔑 角色分组</h3><button class="icon-btn" style="width:24px;height:24px;font-size:13px" onclick="openRoleModal()">＋</button></div>
+      <div class="pl-l">
+        <div class="ri act"><span class="ic">👤</span><span class="nm">管理员</span><span class="ct">3</span></div>
+        <div class="ri"><span class="ic">👥</span><span class="nm">编辑者</span><span class="ct">8</span></div>
+        <div class="ri"><span class="ic">👁️</span><span class="nm">访客（只读）</span><span class="ct">12</span></div>
+        <div class="ri"><span class="ic">🔒</span><span class="nm">合规审计</span><span class="ct">2</span></div>
+        <div class="ri"><span class="ic">📦</span><span class="nm">产品团队</span><span class="ct">6</span></div>
+      </div>
+    </div>
+    <div class="pr">
+      <div class="pr-h"><h3>管理员 · 权限详情</h3><span class="hint">3 位成员</span></div>
+      <div class="pr-t">
+        <table><thead><tr><th>用户</th><th>部门</th><th>财务报告</th><th>人力资源</th><th>技术文档</th><th>法务合规</th><th>产品手册</th><th>操作</th></tr></thead>
+          <tbody>
+            <tr><td>张明</td><td>技术部</td><td><span class="perm-tag r">读写</span></td><td><span class="perm-tag x">检索</span></td><td><span class="perm-tag r">读写</span></td><td><span class="perm-tag w">只写</span></td><td><span class="perm-tag x">检索</span></td><td><button class="icon-btn" style="width:22px;height:22px;font-size:11px" onclick="openRoleModal()">✎</button></td></tr>
+            <tr><td>李华</td><td>财务部</td><td><span class="perm-tag r">读写</span></td><td><span class="perm-tag x">检索</span></td><td><span class="perm-tag" style="color:#bbb">—</span></td><td><span class="perm-tag x">检索</span></td><td><span class="perm-tag" style="color:#bbb">—</span></td><td><button class="icon-btn" style="width:22px;height:22px;font-size:11px" onclick="openRoleModal()">✎</button></td></tr>
+            <tr><td>王磊</td><td>运维部</td><td><span class="perm-tag x">检索</span></td><td><span class="perm-tag x">检索</span></td><td><span class="perm-tag r">读写</span></td><td><span class="perm-tag" style="color:#bbb">—</span></td><td><span class="perm-tag x">检索</span></td><td><button class="icon-btn" style="width:22px;height:22px;font-size:11px" onclick="openRoleModal()">✎</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Role Modal -->
+<div class="perm-m" id="roleModal" onclick="if(event.target===this)closeRoleModal()">
+  <div class="perm-b">
+    <div class="perm-h"><h3>✎ 编辑角色权限</h3><button class="icon-btn" onclick="closeRoleModal()">✕</button></div>
+    <div class="perm-bd">
+      <div class="pf"><div class="fl"><span class="l">角色名称</span></div><input type="text" value="管理员" /></div>
+      <div class="pt">📚 知识库权限分配</div>
+      <div class="pg">
+        <div class="po chk"><span class="cb">✓</span><span class="kn">💳 财务报告</span><div class="kp"><span class="kt">读取</span><span class="kt">写入</span><span class="kt">检索</span></div></div>
+        <div class="po chk"><span class="cb">✓</span><span class="kn">👥 人力资源</span><div class="kp"><span class="kt">读取</span><span class="kt">检索</span></div></div>
+        <div class="po chk"><span class="cb">✓</span><span class="kn">⚙️ 技术文档</span><span class="kp"><span class="kt">读取</span><span class="kt">写入</span><span class="kt">检索</span></div></div>
+        <div class="po"><span class="cb">✓</span><span class="kn">📋 法务合规</span><div class="kp"><span class="kt">读取</span><span class="kt">检索</span></div></div>
+        <div class="po chk"><span class="cb">✓</span><span class="kn">📦 产品手册</span><div class="kp"><span class="kt">读取</span><span class="kt">检索</span></div></div>
+      </div>
+    </div>
+    <div class="perm-f"><button class="btn btn-outline" onclick="closeRoleModal()">取消</button><button class="btn btn-primary" onclick="closeRoleModal();showToast('权限配置已保存')">保存</button></div>
   </div>
 </div>
 
@@ -681,6 +782,19 @@ document.addEventListener('click',function(e){if(e.target.closest('.chunk-tag'))
 function toggleGrp(el){const b=el.nextElementSibling,a=el.querySelector('.ar');b.classList.toggle('hide');a.classList.toggle('up')}
 function pickStyle(el){el.parentElement.querySelectorAll('.ro').forEach(r=>r.classList.remove('act'));el.classList.add('act')}
 function toggleKB(el){el.classList.toggle('chk')}
+
+// ── Permissions ──
+function openRoleModal(){document.getElementById('roleModal').classList.add('show')}
+function closeRoleModal(){document.getElementById('roleModal').classList.remove('show')}
+document.querySelectorAll('.perm-wrap .ri').forEach(el=>{
+  el.addEventListener('click',()=>{
+    document.querySelectorAll('.perm-wrap .ri').forEach(r=>r.classList.remove('act'));
+    el.classList.add('act');
+  })
+});
+document.querySelectorAll('.po').forEach(el=>{
+  el.addEventListener('click',()=>{el.classList.toggle('chk')});
+});
 </script>
 </body>
 </html>
