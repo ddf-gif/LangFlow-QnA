@@ -8,69 +8,57 @@
 
 <div align="center">
   <h1>LangFlow QnA</h1>
-  <p><strong>基于 LangChain + LangGraph 的知识库智能问答 Agent 系统</strong></p>
+  <p><strong>B 端管理 + C 端使用的知识库智能问答平台</strong></p>
   <p>意图路由 → 语义检索 → 重排序 → 验证循环，全链路可控 Agent 工作流</p>
 </div>
 
 ---
 
-## 系统架构
+## 架构概览
 
 ```
-用户输入
-    │
-    ▼
-┌────────────────────────────────────────────────────────┐
-│                   意图识别 (Intent Router)               │
-│                    LLM 分类问题类型                      │
-└────────┬──────────┬──────────────┬──────────────────────┘
-         │          │              │
-    ┌────┴────┐ ┌───┴───┐  ┌─────┴──────┐
-    │  QA     │ │ 闲聊  │  │ 无法处理   │
-    │ 知识问答│ │直接对话│  │ 兜底回复   │
-    └────┬────┘ └───┬───┘  └─────┬──────┘
-         │          └──────┬──────┘
-         ▼                 ▼
-┌──────────────────┐  ┌──────────┐
-│  向量检索         │  │LLM 直接  │
-│  Chroma + BGE     │  │回复      │
-└────────┬─────────┘  └──────────┘
-         │
-         ▼
-┌──────────────────┐
-│  LLM 重排序      │
-│  Top-K 精排       │
-└────────┬─────────┘
-         │
-         ▼
-┌──────────────────┐
-│  答案生成        │
-│  RAG + 上下文     │
-└────────┬─────────┘
-         │
-         ▼
-┌──────────────────┐
-│  验证节点        │ ← 不通过 → 重新检索 (最多 2 次)
-│  幻觉检测/引用检查│
-└────────┬─────────┘
-         │ 通过
-         ▼
-      最终输出
+┌─────────────────────────────────────────────────────────────────┐
+│                        用户访问                                  │
+└──────────┬────────────────────────────────┬─────────────────────┘
+           │                                │
+           ▼                                ▼
+┌─────────────────────┐    ┌─────────────────────────────────────┐
+│  C 端用户问答界面    │    │  B 端管理后台                        │
+│  /                   │    │  /admin/                            │
+│  简洁对话页           │    │  文档管理 / Agent 配置 / 角色管理   │
+│  对话历史侧栏         │    │  数据看板 / 分类管理               │
+│  引用来源展示         │    │                                     │
+└──────────┬───────────┘    └──────────┬──────────────────────────┘
+           │                           │
+           └──────────┬───────────────┘
+                      ▼
+           ┌─────────────────────┐
+           │   FastAPI 后端       │
+           │   /api/*            │
+           └──────────┬──────────┘
+                      │
+         ┌────────────┼────────────┐
+         ▼            ▼            ▼
+   ┌─────────┐ ┌───────────┐ ┌──────────┐
+   │ Chroma  │ │  JSON 文件 │ │  LLM    │
+   │ 向量库  │ │  持久化    │ │  API    │
+   └─────────┘ └───────────┘ └──────────┘
 ```
-
----
 
 ## 特性
 
-- **可控工作流** — LangGraph StateGraph 驱动，7 个节点 + 条件路由 + 验证循环
-- **语义检索** — 本地 BGE 嵌入模型 + Chroma 向量库，支持中文
-- **意图识别** — LLM 自动分类问题类型（QA / 闲聊 / 无法处理）
-- **LLM 重排序** — 对检索结果二次精排，提升相关度
-- **答案验证** — 自动检查是否产生幻觉，不通过则重新检索
-- **多轮对话** — Checkpointer 机制，同一会话自动记忆历史
-- **文件上传** — 拖拽上传文档，实时导入知识库
-- **流式 API** — FastAPI + SSE 流式输出（可选）
-- **暗色 UI** — 霓虹暗色主题前端，响应式设计
+| 特性 | 说明 |
+|------|------|
+| **🔐 用户认证** | JWT 令牌，支持注册/登录，管理员与普通用户角色分离 |
+| **🧠 C 端问答** | 简洁对话界面，左侧历史记录栏，对话持久化存储 |
+| **⚙️ B 端管理** | 文档上传/管理、Agent 配置、角色管理、数据看板 |
+| **📚 知识库分类** | 自定义分类目录，文档按分类组织 |
+| **💬 多轮对话** | 基于 LangGraph Checkpointer 的会话记忆 |
+| **🔍 语义检索** | 本地 BGE 嵌入模型 + Chroma 向量库 |
+| **🎯 意图识别** | LLM 自动分类问题类型（QA / 闲聊 / 无法处理） |
+| **✅ 答案验证** | 幻觉检测 + 引用验证，不通过则重新检索 |
+| **🎨 极简 UI** | 黑白极简风格，响应式设计，暗色模式（B 端） |
+| **📄 文件上传** | 支持 .txt / .md / .py / .js / .ts / .json / .csv |
 
 ---
 
@@ -98,41 +86,53 @@ pip install -r requirements.txt
 # 复制环境变量模板
 cp .env.example .env
 
-# 编辑 .env 填入你的 API Key
-# 以 DeepSeek 为例：
+# 编辑 .env 填入你的配置
 #   LLM_API_KEY=sk-your-key
 #   LLM_BASE_URL=https://api.deepseek.com/v1
 #   LLM_MODEL=deepseek-chat
+#
+#   # 管理员账号（默认 admin / admin123）
+#   ADMIN_USERNAME=admin
+#   ADMIN_PASSWORD=admin123
 ```
+
+### 启动
+
+```bash
+# 启动 Web 服务（推荐使用离线模式避免 SSL 问题）
+set HF_HUB_OFFLINE=1 && uvicorn app.main:app --host 127.0.0.1 --port 8765
+```
+
+打开 **http://127.0.0.1:8765/login** 访问登录页面。
+
+### 访问地址
+
+| 页面 | URL | 说明 |
+|------|-----|------|
+| 🔐 登录/注册 | `http://127.0.0.1:8765/login` | 注册或登录 |
+| 🧠 C 端问答 | `http://127.0.0.1:8765/` | 用户问答界面（需登录） |
+| ⚙️ B 端管理 | `http://127.0.0.1:8765/admin/` | 管理后台（需管理员登录） |
+| 📖 API 文档 | `http://127.0.0.1:8765/docs` | Swagger 文档 |
+
+### 默认管理员账号
+
+| 用户名 | 密码 |
+|--------|------|
+| `admin` | `admin123` |
+
+> 普通用户请在登录页面点击「注册」自行创建账号。
 
 ### 导入知识文档
 
 ```bash
-# Windows (PowerShell)
-$env:HF_ENDPOINT = "https://hf-mirror.com"
+# 方式一：通过管理后台网页上传
+# 访问 http://127.0.0.1:8765/admin/ → 文档管理 → 上传
+
+# 方式二：命令行导入
 python scripts/ingest_docs.py
-
-# 或导入自定义文档:
-# python scripts/ingest_docs.py --dir ./my_docs
 ```
 
-> 首次运行会自动下载 BGE 中文嵌入模型（约 30MB）。
-
-### 启动
-
-#### ① 命令行模式（适合快速测试）
-
-```bash
-python -X utf8 -m app.core.agent.graph
-```
-
-#### ② Web 服务模式（推荐）
-
-```bash
-uvicorn app.main:app --reload
-```
-
-打开 **http://127.0.0.1:8000** 访问前端界面。
+> 首次运行会自动下载 BGE 中文嵌入模型（约 30MB，仅需一次）。
 
 ---
 
@@ -141,38 +141,54 @@ uvicorn app.main:app --reload
 ```
 LangFlow-QnA/
 ├── app/
-│   ├── main.py                    # FastAPI 入口
-│   ├── config.py                  # pydantic-settings 配置
-│   ├── core/agent/                # ★ LangGraph 工作流核心
-│   │   ├── state.py               # Agent 状态定义 (TypedDict)
-│   │   ├── graph.py               # 工作流图 (7 个节点 + 条件边)
-│   │   └── nodes/                 # 各节点实现
-│   │       ├── intent_router.py   #   意图识别
-│   │       ├── retriever.py       #   向量检索
-│   │       ├── reranker.py        #   LLM 重排序
-│   │       ├── generator.py       #   答案生成
-│   │       ├── verifier.py        #   验证 & 幻觉检测
-│   │       ├── chat_node.py       #   闲聊
-│   │       └── fallback.py        #   兜底
+│   ├── main.py                       # FastAPI 入口
+│   ├── config.py                     # pydantic-settings 配置
+│   ├── core/agent/                   # ★ LangGraph 工作流核心
+│   │   ├── state.py                  # Agent 状态定义
+│   │   ├── graph.py                  # 工作流图
+│   │   └── nodes/                    # 各节点实现
+│   │       ├── intent_router.py      #   意图识别
+│   │       ├── retriever.py          #   向量检索
+│   │       ├── reranker.py           #   LLM 重排序
+│   │       ├── generator.py          #   答案生成
+│   │       ├── verifier.py           #   验证 & 幻觉检测
+│   │       ├── chat_node.py          #   闲聊
+│   │       └── fallback.py           #   兜底
 │   ├── retrieval/
-│   │   └── vector_store.py        # Chroma 封装
+│   │   └── vector_store.py           # Chroma 封装
 │   ├── ingestion/
-│   │   └── pipeline.py            # 文档导入管线
+│   │   └── pipeline.py               # 文档导入管线
 │   ├── api/routes/
-│   │   ├── chat.py                # 对话 API (含 SSE 流式)
-│   │   └── documents.py           # 文件上传 API
-│   ├── static/
-│   │   └── index.html             # 前端界面
-│   └── services/
-│       └── session.py             # 会话管理
+│   │   ├── auth.py                   # 用户认证 API
+│   │   ├── chat.py                   # 对话 API
+│   │   ├── conversations.py          # 对话记录 API
+│   │   ├── documents.py              # 文档管理 API
+│   │   ├── stats.py                  # 数据看板 API
+│   │   ├── categories.py            # 分类管理 API
+│   │   └── roles.py                  # 角色管理 API
+│   ├── services/
+│   │   ├── auth.py                   # JWT + 密码哈希
+│   │   ├── conversations.py          # 对话记录持久化
+│   │   ├── doc_registry.py           # 文档注册表
+│   │   ├── roles.py                  # 角色管理
+│   │   └── session.py                # 会话管理
+│   └── static/
+│       ├── index.html                # C 端问答页面
+│       ├── login.html                # 登录/注册页面
+│       └── admin/
+│           └── index.html            # B 端管理后台
 ├── scripts/
-│   ├── ingest_docs.py             # 文档导入脚本
-│   └── eval_pipeline.py           # 问答质量评估
+│   └── ingest_docs.py                # 文档导入脚本
 ├── tests/
-│   ├── unit/                      # 单元测试
-│   └── integration/               # 集成测试
 ├── data/
-│   └── knowledge/                 # 默认知识文档目录
+│   ├── knowledge/                    # 默认知识文档目录
+│   ├── uploads/                      # 上传文档目录
+│   ├── vector_store/                 # Chroma 持久化
+│   ├── doc_registry.json             # 文档元数据
+│   ├── categories.json               # 分类列表
+│   ├── roles.json                    # 角色数据
+│   ├── users.json                    # 用户数据
+│   └── conversations.json            # 对话记录
 ├── docker-compose.yml
 ├── pyproject.toml
 └── .env.example
@@ -182,28 +198,74 @@ LangFlow-QnA/
 
 ## API 文档
 
-启动服务后访问 **http://127.0.0.1:8000/docs** 查看完整的 Swagger 文档。
+启动服务后访问 **http://127.0.0.1:8765/docs** 查看 Swagger 文档。
 
 | 接口 | 方法 | 说明 |
 |------|------|------|
+| `/api/auth/register` | POST | 用户注册 |
+| `/api/auth/login` | POST | 用户登录 |
+| `/api/auth/me` | GET | 当前用户信息 |
 | `/api/chat` | POST | 对话问答 |
 | `/api/chat/stream` | POST | 流式对话 (SSE) |
-| `/api/documents/upload` | POST | 上传文档到知识库 |
+| `/api/conversations` | GET | 对话列表 |
+| `/api/conversations` | POST | 创建对话 |
+| `/api/conversations/{id}` | GET | 对话详情（含消息） |
+| `/api/conversations/{id}` | DELETE | 删除对话 |
+| `/api/conversations/{id}/messages` | POST | 追加消息 |
+| `/api/documents` | GET | 文档列表 |
+| `/api/documents/upload` | POST | 上传文档 |
+| `/api/documents/{id}` | GET | 文档详情 |
+| `/api/documents/{id}` | DELETE | 删除文档 |
+| `/api/documents/reindex` | POST | 重索引 |
+| `/api/documents/batch-category` | POST | 批量分类 |
+| `/api/categories` | GET | 分类列表 |
+| `/api/categories` | POST | 创建分类 |
+| `/api/roles` | GET | 角色列表 |
+| `/api/roles` | POST | 创建角色 |
+| `/api/roles/{id}` | DELETE | 删除角色 |
+| `/api/stats` | GET | 数据看板统计 |
 | `/health` | GET | 健康检查 |
-| `/` | GET | 前端界面 |
 
 ### 示例
 
 ```bash
-# 问答
-curl -X POST http://127.0.0.1:8000/api/chat \
+# 注册
+curl -X POST http://127.0.0.1:8765/api/auth/register \
   -H "Content-Type: application/json" \
+  -d '{"username": "myuser", "password": "mypass123"}'
+
+# 登录
+curl -X POST http://127.0.0.1:8765/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"username": "admin", "password": "admin123"}'
+
+# 问答（需传入 token）
+TOKEN="your-jwt-token"
+curl -X POST http://127.0.0.1:8765/api/chat \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $TOKEN" \
   -d '{"message": "2024年营收多少", "session_id": "test-1"}'
 
 # 上传文档
-curl -X POST http://127.0.0.1:8000/api/documents/upload \
+curl -X POST http://127.0.0.1:8765/api/documents/upload \
   -F "file=@report.txt"
 ```
+
+---
+
+## 技术栈
+
+| 类别 | 技术 |
+|------|------|
+| LLM 编排 | LangChain ≥0.3, LangGraph ≥0.2 |
+| 向量库 | Chroma (本地, 无须 Docker) |
+| 嵌入模型 | BAAI/bge-small-zh-v1.5 (本地, 30MB) |
+| LLM | 兼容 OpenAI API (DeepSeek / OpenAI / 通义千问) |
+| 服务框架 | FastAPI + Uvicorn |
+| 认证 | JWT (python-jose) + bcrypt |
+| C 端前端 | 纯 HTML/CSS/JS (极简黑白风格) |
+| B 端前端 | 纯 HTML/CSS/JS (管理后台) |
+| 存储 | JSON 文件 / Chroma 向量库 |
 
 ---
 
@@ -219,19 +281,6 @@ curl -X POST http://127.0.0.1:8000/api/documents/upload \
 | **4** | Reranker, Verifier, Loops | 质量保障与验证循环 |
 | **5** | FastAPI, Streaming, SSE | 生产化部署 |
 | **6** | Testing, Evaluation | 评估与测试 |
-
----
-
-## 技术栈
-
-| 类别 | 技术 |
-|------|------|
-| LLM 编排 | LangChain ≥0.3, LangGraph ≥0.2 |
-| 向量库 | Chroma (本地, 无须 Docker) |
-| 嵌入模型 | BAAI/bge-small-zh-v1.5 (本地, 30MB) |
-| LLM | 兼容 OpenAI API (DeepSeek / OpenAI / 通义千问) |
-| 服务框架 | FastAPI + Uvicorn |
-| 前端 | 纯 HTML/CSS/JS (暗色霓虹主题) |
 
 ---
 

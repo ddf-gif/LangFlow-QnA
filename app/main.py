@@ -20,6 +20,7 @@ from app.api.routes.stats import router as stats_router
 from app.api.routes.categories import router as categories_router
 from app.api.routes.roles import router as roles_router
 from app.api.routes.auth import router as auth_router
+from app.api.routes.conversations import router as conversations_router
 from app.services import doc_registry
 
 app = FastAPI(
@@ -44,6 +45,7 @@ app.include_router(stats_router)
 app.include_router(categories_router)
 app.include_router(roles_router)
 app.include_router(auth_router)
+app.include_router(conversations_router)
 
 
 @app.on_event("startup")

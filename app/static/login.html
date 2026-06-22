@@ -5,105 +5,102 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>LangFlow · 登录</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='28' font-size='28'>🧠</text></svg>"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='black'/><text y='24' font-size='22' fill='white' font-family='sans-serif' font-weight='bold'>L</text></svg>"/>
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 :root{
-  --primary:#4A7BA7;--primary-hover:#3B6390;--primary-light:#E8EFF6;
-  --bg:#F4F6FA;--surface:#FFFFFF;
-  --text:#1A2332;--text-secondary:#5A6B7F;--text-muted:#8E9DB2;
-  --border:#E2E6ED;
-  --success:#4CAF84;--error:#D95C5C;
-  --shadow-lg:0 8px 24px rgba(0,0,0,0.06);
-  --radius:12px;
-  --font:'Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;
-  --transition:0.2s ease;
+  --black:#0A0A0A;--gray-900:#171717;--gray-700:#404040;
+  --gray-500:#737373;--gray-300:#D4D4D4;--gray-200:#E5E5E5;
+  --gray-100:#F5F5F5;--gray-50:#FAFAFA;--white:#FFFFFF;
+  --font:'Inter','Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;
+  --radius:8px;
 }
-html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--text);font-size:14px;line-height:1.6}
-input,button,select{font-family:var(--font);font-size:14px}
+html,body{height:100%;font-family:var(--font);background:var(--white);color:var(--black);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+input,button,select{font-family:var(--font);font-size:15px}
 
-.page{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
+.page{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:24px}
 
-/* Card */
-.card{background:var(--surface);border-radius:var(--radius);width:400px;max-width:100%;padding:40px 36px 32px;box-shadow:var(--shadow-lg)}
-.card .logo{text-align:center;font-size:36px;margin-bottom:4px}
-.card h1{text-align:center;font-size:20px;font-weight:600;margin-bottom:4px}
-.card .sub{text-align:center;font-size:13px;color:var(--text-muted);margin-bottom:28px}
+.card{width:380px;max-width:100%;text-align:center}
+
+.brand{margin-bottom:48px}
+.brand .logo{display:inline-flex;align-items:center;justify-content:center;width:56px;height:56px;background:var(--black);color:var(--white);border-radius:var(--radius);font-size:28px;font-weight:700;font-family:var(--font);margin-bottom:16px}
+.brand h1{font-size:24px;font-weight:700;letter-spacing:-0.5px;margin-bottom:6px}
+.brand .sub{font-size:14px;color:var(--gray-500);font-weight:400}
 
 /* Tabs */
-.tabs{display:flex;border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:20px}
-.tabs .tab{flex:1;text-align:center;padding:9px 0;font-size:13px;font-weight:500;cursor:pointer;transition:all var(--transition);background:var(--surface);color:var(--text-muted)}
-.tabs .tab.act{background:var(--primary);color:#fff}
-.tabs .tab:not(.act):hover{background:var(--border-light, #EDF0F5)}
+.tabs{display:flex;border-bottom:2px solid var(--gray-200);margin-bottom:32px}
+.tabs .tab{flex:1;padding:10px 0;font-size:15px;font-weight:600;cursor:pointer;background:none;border:none;color:var(--gray-500);position:relative;transition:color .2s}
+.tabs .tab.act{color:var(--black)}
+.tabs .tab.act::after{content:'';position:absolute;bottom:-2px;left:0;right:0;height:2px;background:var(--black)}
+.tabs .tab:not(.act):hover{color:var(--gray-700)}
 
-/* Role selector */
-.role-sel{display:flex;gap:8px;margin-bottom:16px}
-.role-sel .ro{flex:1;padding:10px;border:2px solid var(--border);border-radius:8px;text-align:center;cursor:pointer;transition:all var(--transition);font-size:13px;font-weight:500;color:var(--text-secondary);background:var(--surface)}
-.role-sel .ro:hover{border-color:var(--primary-light)}
-.role-sel .ro.act{border-color:var(--primary);background:var(--primary-light);color:var(--primary)}
-.role-sel .ro .ic{font-size:20px;display:block;margin-bottom:2px}
+/* Role Selector */
+.role-sel{display:flex;gap:8px;margin-bottom:24px}
+.role-sel .ro{flex:1;padding:14px 8px;border:2px solid var(--gray-200);border-radius:var(--radius);cursor:pointer;transition:all .15s;background:var(--white)}
+.role-sel .ro:hover{border-color:var(--gray-300)}
+.role-sel .ro.act{border-color:var(--black);background:var(--black);color:var(--white)}
+.role-sel .ro .ic{font-size:18px;display:block;margin-bottom:4px}
+.role-sel .ro .lb{font-size:13px;font-weight:600}
 
 /* Form */
-.pf{margin-bottom:14px}
-.pf label{display:block;font-size:13px;font-weight:500;color:var(--text-secondary);margin-bottom:4px}
-.pf input{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;outline:none;transition:border var(--transition)}
-.pf input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(74,123,167,0.1)}
-
-.btn{width:100%;padding:10px;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600;transition:all var(--transition);margin-top:4px}
-.btn-primary{background:var(--primary);color:#fff}
-.btn-primary:hover{background:var(--primary-hover)}
-.btn:disabled{opacity:.5;cursor:not-allowed}
-
-.err{font-size:13px;color:var(--error);margin-top:6px;display:none;text-align:center}
-
-.foot{text-align:center;font-size:13px;color:var(--text-muted);margin-top:16px}
-.foot a{cursor:pointer;color:var(--primary);font-weight:500;text-decoration:none}
-
-/* Toggle between login/register */
-.form-area{display:block}
+.form-area{display:block;text-align:left}
 .form-area.hide{display:none}
+.pf{margin-bottom:18px}
+.pf label{display:block;font-size:13px;font-weight:600;color:var(--gray-700);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px}
+.pf input{width:100%;padding:11px 14px;border:1px solid var(--gray-300);border-radius:var(--radius);outline:none;background:var(--white);transition:border .15s}
+.pf input:focus{border-color:var(--black)}
+
+.btn{width:100%;padding:12px;border:none;border-radius:var(--radius);cursor:pointer;font-size:15px;font-weight:600;transition:all .15s;margin-top:6px}
+.btn-primary{background:var(--black);color:var(--white)}
+.btn-primary:hover{background:var(--gray-900)}
+.btn-primary:disabled{background:var(--gray-300);cursor:not-allowed}
+
+.err{font-size:13px;color:#DC2626;margin-top:8px;display:none}
+
+.foot{margin-top:24px;font-size:14px;color:var(--gray-500)}
+.foot a{cursor:pointer;color:var(--black);font-weight:600;text-decoration:underline}
 </style>
 </head>
 <body>
 
 <div class="page">
   <div class="card">
-    <div class="logo">🧠</div>
-    <h1>LangFlow</h1>
-    <div class="sub">知识库智能问答平台</div>
-
-    <!-- Tabs: Login / Register -->
-    <div class="tabs">
-      <div class="tab act" id="tabLogin" onclick="switchTab('login')">登录</div>
-      <div class="tab" id="tabReg" onclick="switchTab('register')">注册</div>
+    <div class="brand">
+      <div class="logo">L</div>
+      <h1>LangFlow</h1>
+      <div class="sub">知识库智能问答平台</div>
     </div>
 
-    <!-- Role Selector (only for login) -->
+    <div class="tabs">
+      <button class="tab act" id="tabLogin" onclick="switchTab('login')">登录</button>
+      <button class="tab" id="tabReg" onclick="switchTab('register')">注册</button>
+    </div>
+
     <div class="role-sel" id="roleSelector">
       <div class="ro act" data-role="user" onclick="selectRole(this)">
-        <span class="ic">👤</span>用户登录
+        <span class="ic">👤</span>
+        <span class="lb">用户登录</span>
       </div>
       <div class="ro" data-role="admin" onclick="selectRole(this)">
-        <span class="ic">⚙️</span>管理员登录
+        <span class="ic">⚙️</span>
+        <span class="lb">管理员登录</span>
       </div>
     </div>
 
-    <!-- Login Form -->
     <div class="form-area" id="loginForm">
       <div class="pf"><label>用户名</label><input id="loginUser" type="text" placeholder="输入用户名" onkeydown="if(event.key==='Enter')doLogin()"/></div>
       <div class="pf"><label>密码</label><input id="loginPass" type="password" placeholder="输入密码" onkeydown="if(event.key==='Enter')doLogin()"/></div>
       <div class="err" id="loginErr"></div>
-      <button class="btn btn-primary" id="loginBtn" onclick="doLogin()">登录</button>
+      <button class="btn btn-primary" id="loginBtn" onclick="doLogin()">登 录</button>
       <div class="foot">还没有账号？<a onclick="switchTab('register')">立即注册</a></div>
     </div>
 
-    <!-- Register Form -->
     <div class="form-area hide" id="regForm">
       <div class="pf"><label>用户名</label><input id="regUser" type="text" placeholder="至少 2 个字符" onkeydown="if(event.key==='Enter')doRegister()"/></div>
       <div class="pf"><label>密码</label><input id="regPass" type="password" placeholder="至少 4 个字符" onkeydown="if(event.key==='Enter')doRegister()"/></div>
       <div class="err" id="regErr"></div>
-      <button class="btn btn-primary" id="regBtn" onclick="doRegister()">注册</button>
+      <button class="btn btn-primary" id="regBtn" onclick="doRegister()">注 册</button>
       <div class="foot">已有账号？<a onclick="switchTab('login')">去登录</a></div>
     </div>
   </div>
@@ -145,20 +142,14 @@ async function doLogin(){
     const r=await fetch('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:u,password:p})});
     const d=await r.json();
     if(!r.ok)throw new Error(d.detail||'登录失败');
-    // 验证角色匹配
-    if(curRole==='admin'&&d.role!=='admin'){throw new Error('该账号不是管理员');}
-    if(curRole==='user'&&d.role==='admin'){/* 管理员也可以以用户身份进入C端，允许 */}
-
+    if(curRole==='admin'&&d.role!=='admin')throw new Error('该账号不是管理员');
     localStorage.setItem('token',d.token);
     localStorage.setItem('username',d.username);
     localStorage.setItem('role',d.role);
-
-    // 根据角色跳转
-    if(curRole==='admin'){window.location.href='/admin/';}
-    else{window.location.href='/';}
+    window.location.href=curRole==='admin'?'/admin/':'/';
   }catch(e){
     err.textContent=e.message;err.style.display='block';
-    btn.disabled=false;btn.textContent='登录';
+    btn.disabled=false;btn.textContent='登 录';
   }
 }
 
@@ -174,24 +165,21 @@ async function doRegister(){
     const r=await fetch('/api/auth/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:u,password:p})});
     const d=await r.json();
     if(!r.ok)throw new Error(d.detail||'注册失败');
-    // 注册成功，自动登录
     localStorage.setItem('token',d.token);
     localStorage.setItem('username',d.username);
     localStorage.setItem('role','user');
     window.location.href='/';
   }catch(e){
     err.textContent=e.message;err.style.display='block';
-    btn.disabled=false;btn.textContent='注册';
+    btn.disabled=false;btn.textContent='注 册';
   }
 }
 
-// 如果已登录，直接跳转
 (function(){
   const token=localStorage.getItem('token');
   const role=localStorage.getItem('role');
   if(token&&role){
-    if(role==='admin'){window.location.href='/admin/';return;}
-    else{window.location.href='/';return;}
+    window.location.href=role==='admin'?'/admin/':'/';
   }
 })();
 </script>

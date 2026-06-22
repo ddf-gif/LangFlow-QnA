@@ -3,263 +3,161 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>LangFlow · 知识问答</title>
+<title>LangFlow · 智能问答</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='28' font-size='28'>🧠</text></svg>"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='black'/><text y='24' font-size='22' fill='white' font-family='sans-serif' font-weight='bold'>L</text></svg>"/>
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-:root{
-  --primary:#4A7BA7;--primary-hover:#3B6390;
-  --bg:#F4F6FA;--surface:#FFFFFF;
-  --text:#1A2332;--text-secondary:#5A6B7F;--text-muted:#8E9DB2;
-  --border:#E2E6ED;--border-light:#EDF0F5;
-  --success:#4CAF84;--error:#D95C5C;
-  --shadow:0 2px 8px rgba(0,0,0,0.04);
-  --shadow-lg:0 8px 24px rgba(0,0,0,0.06);
-  --radius:12px;
-  --font:'Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;
-  --transition:0.2s ease;
-}
-html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--text);font-size:14px;line-height:1.6}
+:root{--black:#0A0A0A;--gray-900:#171717;--gray-700:#404040;--gray-500:#737373;--gray-400:#A3A3A3;--gray-300:#D4D4D4;--gray-200:#E5E5E5;--gray-100:#F5F5F5;--gray-50:#FAFAFA;--white:#FFFFFF;--font:'Inter','Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;--radius:8px}
+html,body{height:100%;font-family:var(--font);background:var(--gray-50);color:var(--black);font-size:14px;-webkit-font-smoothing:antialiased}
 input,textarea,button,select{font-family:var(--font);font-size:14px}
-a{color:var(--primary);text-decoration:none}
-a:hover{text-decoration:underline}
-
-/* Layout */
-.app{display:flex;flex-direction:column;height:100vh;max-width:900px;margin:0 auto;padding:0 16px}
-
-/* Header */
-.hdr{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);flex-shrink:0;gap:12px}
-.hdr-l{display:flex;align-items:center;gap:10px;flex-shrink:0}
-.hdr-l .logo{font-size:22px;line-height:1}
-.hdr-l .title{font-size:16px;font-weight:600;color:var(--text)}
-.hdr-c{flex:1;min-width:0;display:flex;align-items:center;gap:8px}
-.hdr-c select{padding:6px 10px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);font-size:13px;max-width:180px;cursor:pointer}
-.hdr-c select:focus{outline:none;border-color:var(--primary)}
-.hdr-r{display:flex;align-items:center;gap:6px;flex-shrink:0}
-.btn{padding:7px 16px;border-radius:8px;border:none;cursor:pointer;font-size:13px;font-weight:500;transition:all var(--transition)}
-.btn-primary{background:var(--primary);color:#fff}
-.btn-primary:hover{background:var(--primary-hover)}
-.btn-outline{background:transparent;border:1px solid var(--border);color:var(--text-secondary)}
-.btn-outline:hover{border-color:var(--primary);color:var(--primary)}
-.btn-ghost{background:transparent;border:none;color:var(--text-muted);padding:6px 10px}
-.btn-ghost:hover{color:var(--text)}
-.btn-sm{padding:5px 10px;font-size:12px}
-.user-badge{display:flex;align-items:center;gap:6px;padding:4px 10px 4px 4px;border-radius:20px;background:var(--primary-light, #E8EFF6);color:var(--primary);font-size:12px;font-weight:500}
-.user-badge .av{width:24px;height:24px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px}
-
-/* Chat */
-.chat{flex:1;display:flex;flex-direction:column;min-height:0;padding:16px 0}
-.msgs{flex:1;overflow-y:auto;padding:8px 0;display:flex;flex-direction:column;gap:16px;scroll-behavior:smooth}
-.msgs:empty::after{content:'💬 选择知识库后开始提问';display:flex;align-items:center;justify-content:center;height:100%;color:var(--text-muted);font-size:15px}
-.msg{display:flex;gap:10px;max-width:85%;animation:fI .3s ease}
+.app-l{display:flex;height:100vh;overflow:hidden}
+.side{width:280px;background:var(--white);border-right:1px solid var(--gray-200);display:flex;flex-direction:column;flex-shrink:0}
+.side-hdr{display:flex;align-items:center;justify-content:space-between;padding:14px;border-bottom:1px solid var(--gray-200);flex-shrink:0}
+.side-hdr .brand{display:flex;align-items:center;gap:8px}
+.side-hdr .logo{width:26px;height:26px;background:var(--black);color:var(--white);border-radius:5px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px}
+.side-hdr .nm{font-size:15px;font-weight:700}
+.side-hdr .nb{width:28px;height:28px;border-radius:var(--radius);border:1px solid var(--gray-200);background:var(--white);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.side-hdr .nb:hover{background:var(--gray-100)}
+.conv-list{flex:1;overflow-y:auto;padding:6px 8px}
+.conv-it{padding:10px;border-radius:var(--radius);cursor:pointer;display:flex;align-items:center;gap:8px;margin-bottom:2px}
+.conv-it:hover,.conv-it.act{background:var(--gray-100)}
+.conv-it .ct{font-size:13px;font-weight:500;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--gray-700)}
+.conv-it .ct .ts{display:block;font-size:11px;font-weight:400;color:var(--gray-400);margin-top:1px}
+.conv-it .del-btn{width:20px;height:20px;border:none;background:transparent;color:var(--gray-300);cursor:pointer;border-radius:4px;font-size:13px;display:none;align-items:center;justify-content:center;flex-shrink:0}
+.conv-it:hover .del-btn{display:flex}
+.conv-it .del-btn:hover{color:var(--black);background:var(--gray-200)}
+.main{flex:1;display:flex;flex-direction:column;min-width:0}
+.hdr{display:flex;align-items:center;padding:14px 24px;border-bottom:1px solid var(--gray-200);flex-shrink:0;gap:12px}
+.hdr-c select{padding:6px 28px 6px 10px;border:1px solid var(--gray-300);border-radius:var(--radius);background:var(--white);font-size:13px;font-weight:500;cursor:pointer;outline:none;-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath fill='%23737373' d='M5 6L0 0h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;max-width:200px}
+.hdr-c select:focus{border-color:var(--black)}
+.hdr-r{display:flex;align-items:center;gap:8px;flex-shrink:0;margin-left:auto}
+.btn{padding:6px 12px;border-radius:var(--radius);border:none;cursor:pointer;font-size:12px;font-weight:600}
+.btn-primary{background:var(--black);color:var(--white)}
+.btn-primary:hover{background:var(--gray-900)}
+.btn-ghost{background:transparent;border:none;color:var(--gray-500);padding:5px 8px}
+.btn-ghost:hover{color:var(--black)}
+.user-badge{display:flex;align-items:center;gap:5px;padding:2px 8px 2px 2px;border-radius:20px;background:var(--gray-100);font-size:12px;font-weight:600}
+.user-badge .av{width:22px;height:22px;border-radius:50%;background:var(--black);color:var(--white);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700}
+.chat{flex:1;display:flex;flex-direction:column;min-height:0;max-width:860px;margin:0 auto;width:100%;padding:0 20px}
+.msgs{flex:1;overflow-y:auto;padding:16px 0;display:flex;flex-direction:column;gap:16px}
+.welcome{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:var(--gray-400);text-align:center;padding:40px}
+.welcome .ic{font-size:40px;opacity:.25}
+.welcome h2{font-size:18px;font-weight:600;color:var(--gray-700)}
+.welcome p{font-size:13px;max-width:340px}
+.msg{display:flex;gap:10px;max-width:85%;animation:fI .25s ease}
 .msg.me{flex-direction:row-reverse;align-self:flex-end}
 .msg.bot{align-self:flex-start}
-.msg .av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
-.msg.me .av{background:var(--primary);color:#fff;order:1}
-.msg.bot .av{background:#E8EFF6;order:0}
-.msg .b{background:var(--surface);border-radius:var(--radius);padding:12px 16px;box-shadow:var(--shadow);line-height:1.7;white-space:pre-wrap;word-break:break-word}
-.msg.me .b{background:var(--primary);color:#fff;border-bottom-right-radius:4px}
-.msg.bot .b{border-bottom-left-radius:4px}
-.msg .b .ts{font-size:11px;color:var(--text-muted);margin-top:6px}
-.msg.me .b .ts{color:rgba(255,255,255,0.7)}
-.msg .b .cit{color:var(--primary);cursor:pointer;font-size:12px;font-weight:500}
-.msg.me .b .cit{color:rgba(255,255,255,0.9)}
-
-/* Thinking indicator */
-.tds{display:flex;gap:4px;padding:4px 0}
-.tds span{width:6px;height:6px;border-radius:50%;background:var(--text-muted);animation:tp 1.4s infinite}
+.msg .av{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;font-weight:700}
+.msg.me .av{background:var(--black);color:var(--white)}
+.msg.bot .av{background:var(--gray-200);color:var(--gray-700)}
+.msg .b{background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius);padding:10px 14px;line-height:1.65;white-space:pre-wrap;word-break:break-word;font-size:14px}
+.msg.me .b{background:var(--black);color:var(--white);border-color:var(--black);border-bottom-right-radius:2px}
+.msg.bot .b{border-bottom-left-radius:2px}
+.msg .b .ts{font-size:11px;color:var(--gray-400);margin-top:4px}
+.msg.me .b .ts{color:var(--gray-400)}
+.msg .b .cit{color:var(--black);cursor:pointer;font-size:12px;font-weight:600;border-bottom:1px solid var(--gray-400)}
+.msg .b .cit:hover{border-bottom-color:var(--black)}
+.msg.me .b .cit{color:var(--gray-300)}
+.tds{display:flex;gap:4px;padding:6px 0}
+.tds span{width:6px;height:6px;border-radius:50%;background:var(--gray-400);animation:tp 1.4s infinite}
 .tds span:nth-child(2){animation-delay:.2s}
 .tds span:nth-child(3){animation-delay:.4s}
-@keyframes tp{0%,80%,100%{opacity:.3}40%{opacity:1}}
-@keyframes fI{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-
-/* Input */
-.inp{display:flex;gap:8px;padding:12px 0;border-top:1px solid var(--border);flex-shrink:0;align-items:flex-end}
-.inp textarea{flex:1;padding:10px 14px;border:1px solid var(--border);border-radius:var(--radius);resize:none;outline:none;min-height:44px;max-height:120px;line-height:1.5;transition:border var(--transition)}
-.inp textarea:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(74,123,167,0.1)}
-.inp .send{width:44px;height:44px;border-radius:var(--radius);border:none;background:var(--primary);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:20px;transition:all var(--transition);flex-shrink:0}
-.inp .send:hover{background:var(--primary-hover)}
-.inp .send:disabled{opacity:.4;cursor:not-allowed}
-
-/* Modal */
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:200;display:none;align-items:center;justify-content:center;backdrop-filter:blur(2px)}
+@keyframes tp{0%,80%,100%{opacity:.25}40%{opacity:1}}
+@keyframes fI{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.inp{display:flex;gap:8px;padding:16px 0;flex-shrink:0;align-items:flex-end}
+.inp textarea{flex:1;padding:10px 14px;border:1px solid var(--gray-300);border-radius:var(--radius);resize:none;outline:none;min-height:42px;max-height:120px;line-height:1.5;background:var(--white)}
+.inp textarea:focus{border-color:var(--black)}
+.inp .send{width:42px;height:42px;border-radius:var(--radius);border:none;background:var(--black);color:var(--white);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.inp .send:hover{background:var(--gray-900)}
+.inp .send:disabled{background:var(--gray-300);cursor:not-allowed}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200;display:none;align-items:center;justify-content:center}
 .modal.show{display:flex}
-.modal-b{background:var(--surface);border-radius:var(--radius);width:400px;max-width:90vw;padding:28px 24px 20px;box-shadow:var(--shadow-lg);animation:fI .2s ease}
-.modal-h{font-size:18px;font-weight:600;margin-bottom:20px}
-.modal-f{display:flex;gap:8px;justify-content:flex-end;margin-top:20px}
-.modal .pf{margin-bottom:14px}
-.modal .pf label{display:block;font-size:13px;font-weight:500;color:var(--text-secondary);margin-bottom:4px}
-.modal .pf input{width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;outline:none;transition:border var(--transition)}
-.modal .pf input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(74,123,167,0.1)}
-.modal .pf .err{font-size:12px;color:var(--error);margin-top:3px;display:none}
-.modal-foot{text-align:center;font-size:12px;color:var(--text-muted);margin-top:12px}
-.modal-foot a{cursor:pointer;color:var(--primary);font-weight:500}
-
-/* Citation modal */
-.cit-m{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:200;display:none;align-items:center;justify-content:center;backdrop-filter:blur(2px)}
-.cit-m.show{display:flex}
-.cit-b{background:var(--surface);border-radius:var(--radius);width:560px;max-width:90vw;max-height:70vh;display:flex;flex-direction:column;box-shadow:var(--shadow-lg)}
-.cit-h{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 12px;border-bottom:1px solid var(--border)}
-.cit-h h3{font-size:15px;font-weight:600}
-.cit-h .icon-btn{width:30px;height:30px;border:none;background:transparent;color:var(--text-muted);cursor:pointer;border-radius:6px;font-size:18px}
-.cit-h .icon-btn:hover{background:var(--border-light);color:var(--text)}
-.cit-bd{flex:1;overflow-y:auto;padding:16px 20px}
-.cit-it{padding:10px 0;border-bottom:1px solid var(--border-light);font-size:13px;line-height:1.6;color:var(--text-secondary)}
+.modal-b{background:var(--white);border-radius:var(--radius);width:560px;max-width:90vw;max-height:75vh;display:flex;flex-direction:column}
+.modal-h{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 12px;border-bottom:1px solid var(--gray-200)}
+.modal-h h3{font-size:15px;font-weight:700}
+.modal-h .icon-btn{width:28px;height:28px;border:none;background:transparent;color:var(--gray-500);cursor:pointer;border-radius:6px;font-size:18px}
+.modal-h .icon-btn:hover{background:var(--gray-100);color:var(--black)}
+.modal-bd{flex:1;overflow-y:auto;padding:16px 20px}
+.cit-it{padding:10px 0;border-bottom:1px solid var(--gray-100);font-size:13px;color:var(--gray-700)}
 .cit-it:last-child{border:none}
-.cit-it .idx{display:inline-block;background:var(--primary-light,#E8EFF6);color:var(--primary);border-radius:4px;padding:0 6px;font-size:11px;font-weight:600;margin-right:6px}
-
-/* Toast */
-.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);padding:10px 20px;border-radius:8px;color:#fff;font-size:13px;font-weight:500;z-index:300;opacity:0;transition:all .3s ease;pointer-events:none}
-
-/* Responsive */
-@media(max-width:640px){
-  .app{padding:0 12px}
-  .hdr-c select{max-width:120px;font-size:12px}
-  .msg{max-width:92%}
-  .modal-b{padding:20px 16px}
-}
+.cit-it .idx{display:inline-block;background:var(--black);color:var(--white);border-radius:3px;padding:1px 5px;font-size:10px;font-weight:700;margin-right:6px}
+.toast{position:fixed;bottom:32px;left:50%;transform:translateX(-50%);padding:10px 20px;border-radius:var(--radius);background:var(--black);color:var(--white);font-size:13px;font-weight:500;z-index:300;opacity:0;pointer-events:none}
+.toast.show{opacity:1;transition:opacity .25s}
+@media(max-width:900px){.side{width:50px}.side .nm,.side-hdr .nm,.conv-it .ct,.conv-it .del-btn{display:none}.side-hdr .brand{display:none}.conv-it{justify-content:center}.side-hdr{justify-content:center}.hdr-c select{max-width:100px}}
 </style>
 </head>
 <body>
 
-<div class="app">
-  <!-- Header -->
-  <div class="hdr">
-    <div class="hdr-l">
-      <span class="logo">🧠</span>
-      <span class="title">LangFlow</span>
+<div class="app-l">
+  <div class="side">
+    <div class="side-hdr">
+      <div class="brand"><span class="logo">L</span><span class="nm">LangFlow</span></div>
+      <button class="nb" onclick="newConversation()" title="新对话">＋</button>
     </div>
-    <div class="hdr-c">
-      <select id="kbSelect" onchange="curKb=this.value">
-        <option value="">全部知识库</option>
-      </select>
-    </div>
-    <div class="hdr-r" id="authArea"></div>
-  </div>
-
-  <!-- Chat -->
-  <div class="chat">
-    <div class="msgs" id="msgList"></div>
-    <div class="inp">
-      <textarea id="chatInput" rows="1" placeholder="输入您的问题..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();send()}"></textarea>
-      <button class="send" id="sendBtn" onclick="send()" disabled>📤</button>
+    <div class="conv-list" id="convList">
+      <div style="padding:20px 10px;text-align:center;color:var(--gray-400);font-size:12px">加载中...</div>
     </div>
   </div>
-</div>
-
-<!-- Citation Modal -->
-<div class="cit-m" id="citModal" onclick="if(event.target===this)closeModal('citModal')">
-  <div class="cit-b">
-    <div class="cit-h"><h3>📖 引用来源</h3><button class="icon-btn" onclick="closeModal('citModal')">✕</button></div>
-    <div class="cit-bd" id="citList"><!-- 动态渲染 --></div>
+  <div class="main">
+    <div class="hdr">
+      <div class="hdr-c"><select id="kbSelect" onchange="curKb=this.value"></select></div>
+      <div class="hdr-r" id="authArea"></div>
+    </div>
+    <div class="chat">
+      <div class="msgs" id="msgList">
+        <div class="welcome" id="welcome"><div class="ic">💬</div><h2>开始提问</h2><p>选择知识库，或新建对话开始提问</p></div>
+      </div>
+      <div class="inp">
+        <textarea id="chatInput" rows="1" placeholder="输入您的问题..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();send()}"></textarea>
+        <button class="send" id="sendBtn" onclick="send()">↑</button>
+      </div>
+    </div>
   </div>
 </div>
 
-<!-- Toast -->
+<div class="modal" id="citModal" onclick="if(event.target===this)closeModal('citModal')">
+  <div class="modal-b">
+    <div class="modal-h"><h3>引用来源</h3><button class="icon-btn" onclick="closeModal('citModal')">✕</button></div>
+    <div class="modal-bd" id="citList"></div>
+  </div>
+</div>
 <div class="toast" id="toast"></div>
 
 <script>
-// ── Auth Check ──
-(function(){
-  const t=localStorage.getItem('token');
-  if(!t){window.location.href='/login';}
-})();
+(function(){if(!localStorage.getItem('token'))window.location.href='/login'})();
+let token=localStorage.getItem('token')||'',username=localStorage.getItem('username')||'',role=localStorage.getItem('role')||'user';
+let curKb='',curConvId=null,thinking=false;
+loadKbOpts();loadConversations();updateAuthUI();
 
-// ── State ──
-let token=localStorage.getItem('token')||'';
-let username=localStorage.getItem('username')||'';
-let role=localStorage.getItem('role')||'user';
-let curKb='';
-let thinking=false;
+async function loadKbOpts(){try{const r=await fetch('/api/categories'),d=await r.json();document.getElementById('kbSelect').innerHTML='<option value="">全部知识库</option>'+(d.categories||[]).map(c=>`<option value="${c}">${c}</option>`).join('')}catch(e){}}
+function updateAuthUI(){const a=document.getElementById('authArea');a.innerHTML=(role==='admin'?'<a href="/admin/" target="_blank" style="font-size:12px;color:var(--gray-400);text-decoration:none;margin-right:4px">管理</a>':'')+`<span class="user-badge"><span class="av">${username[0].toUpperCase()}</span>${username}</span><button class="btn btn-ghost" onclick="logout()">退出</button>`}
+function logout(){localStorage.removeItem('token');localStorage.removeItem('username');localStorage.removeItem('role');window.location.href='/login'}
+function showToast(m){const e=document.getElementById('toast');e.textContent=m;e.classList.add('show');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('show'),2500)}
+function closeModal(i){document.getElementById(i).classList.remove('show')}
 
-// ── Init ──
-loadKbOptions();
-updateAuthUI();
-
-async function loadKbOptions(){
-  try{
-    const r=await fetch('/api/categories');
-    const d=await r.json();
-    const sel=document.getElementById('kbSelect');
-    sel.innerHTML='<option value="">全部知识库</option>'+ (d.categories||[]).map(c=>`<option value="${c}">${c}</option>`).join('');
-    sel.value=curKb;
-  }catch(e){}
-}
-
-// ── Auth UI ──
-function updateAuthUI(){
-  const area=document.getElementById('authArea');
-  const adminLink=role==='admin'?'<a href="/admin/" target="_blank" style="font-size:12px;color:var(--primary);margin-left:4px;text-decoration:none">⚙️ 管理</a>':'';
-  area.innerHTML=`
-    <span class="user-badge"><span class="av">${username[0].toUpperCase()}</span>${username}</span>
-    ${adminLink}
-    <button class="btn btn-ghost btn-sm" onclick="logout()">退出</button>
-  `;
-}
-function logout(){
-  localStorage.removeItem('token');localStorage.removeItem('username');localStorage.removeItem('role');
-  window.location.href='/login';
-}
-function showToast(m,t){
-  const el=document.getElementById('toast');
-  el.textContent=m;el.style.opacity='1';el.style.background=t==='error'?'var(--error)':'var(--primary)';
-  clearTimeout(el._t);el._t=setTimeout(()=>el.style.opacity='0',2500);
-}
-
+// ── Conversations ──
+async function loadConversations(){try{const r=await fetch('/api/conversations',{headers:{Authorization:'Bearer '+token}});if(!r.ok)return;const d=await r.json(),list=document.getElementById('convList');if(!d.items||!d.items.length){list.innerHTML='<div style="padding:20px 10px;text-align:center;color:var(--gray-400);font-size:12px">暂无对话记录</div>';return}list.innerHTML=d.items.map(c=>`<div class="conv-it${c.id===curConvId?' act':''}" onclick="switchConv('${c.id}')"><span style="font-size:14px;flex-shrink:0">💬</span><div class="ct">${esc(c.title||'新对话')}<span class="ts">${fmtTime(c.updated_at)}</span></div><button class="del-btn" onclick="event.stopPropagation();delConv('${c.id}')">✕</button></div>`).join('')}catch(e){}}
+async function newConversation(){try{const r=await fetch('/api/conversations',{method:'POST',headers:{Authorization:'Bearer '+token}});if(!r.ok)return;const d=await r.json();curConvId=d.id;document.getElementById('msgList').innerHTML='';const w=document.getElementById('welcome');if(w)w.remove();await loadConversations();document.getElementById('chatInput').focus()}catch(e){}}
+async function switchConv(id){try{const r=await fetch('/api/conversations/'+id,{headers:{Authorization:'Bearer '+token}});if(!r.ok)return;const d=await r.json();curConvId=id;const list=document.getElementById('msgList');list.innerHTML='';const w=document.getElementById('welcome');if(w)w.remove();if(d.messages&&d.messages.length)list.innerHTML=d.messages.map(m=>`<div class="msg ${m.role==='user'?'me':'bot'}"><div class="av">${m.role==='user'?username[0].toUpperCase():'L'}</div><div class="b">${esc(m.content)}<div class="ts">${fmtTime(m.timestamp)}</div></div></div>`).join('');list.scrollTop=list.scrollHeight;document.querySelectorAll('.conv-it').forEach(e=>e.classList.toggle('act',e.getAttribute('onclick')?.includes(id)))}catch(e){}}
+async function delConv(id){if(!confirm('确认删除？'))return;try{await fetch('/api/conversations/'+id,{method:'DELETE',headers:{Authorization:'Bearer '+token}});if(curConvId===id){curConvId=null;document.getElementById('msgList').innerHTML=''}await loadConversations()}catch(e){}}
 
 // ── Chat ──
-async function send(){
-  const input=document.getElementById('chatInput');
-  const btn=document.getElementById('sendBtn');
-  const text=input.value.trim();
-  if(!text||thinking||!token)return;
-  if(!token){showToast('请先登录','error');return}
-  thinking=true;btn.disabled=true;
-  input.value='';input.style.height='auto';
+async function send(){const i=document.getElementById('chatInput'),b=document.getElementById('sendBtn'),w=document.getElementById('welcome'),t=i.value.trim();if(!t||thinking)return;if(!curConvId){try{const r=await fetch('/api/conversations',{method:'POST',headers:{Authorization:'Bearer '+token}});if(!r.ok)return;const d=await r.json();curConvId=d.id;await loadConversations()}catch(e){showToast('创建对话失败');return}}
+thinking=true;b.disabled=true;i.value='';i.style.height='auto';if(w)w.remove();const l=document.getElementById('msgList');
+const me=document.createElement('div');me.className='msg me';me.innerHTML=`<div class="av">${username[0].toUpperCase()}</div><div class="b">${esc(t)}<div class="ts">${now()}</div></div>`;l.appendChild(me);
+const bot=document.createElement('div');bot.className='msg bot';bot.innerHTML='<div class="av">L</div><div class="b"><div class="tds"><span></span><span></span><span></span></div></div>';l.appendChild(bot);l.scrollTop=l.scrollHeight;
+await fetch('/api/conversations/'+curConvId+'/messages',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify({role:'user',content:t})}).catch(()=>{});
+try{const r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify({message:t,session_id:'web-'+Date.now()})});if(!r.ok){const e=await r.json();throw new Error(e.detail||'请求失败')}const d=await r.json(),reply=d.reply||'',cit=d.sources&&d.sources.length?` · <span class="cit" onclick="showCitation()">查看 ${d.sources.length} 篇来源</span>`:'';bot.innerHTML=`<div class="av">L</div><div class="b">${esc(reply)}<div class="ts">${now()}${cit}</div></div>`;window._lastCitations=d.sources||[];
+await fetch('/api/conversations/'+curConvId+'/messages',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify({role:'assistant',content:reply})}).catch(()=>{});await loadConversations()}catch(e){bot.innerHTML=`<div class="av">L</div><div class="b">请求失败：${esc(e.message)}<div class="ts">${now()}</div></div>`}
+thinking=false;b.disabled=false;i.focus();l.scrollTop=l.scrollHeight}
 
-  // User message
-  const list=document.getElementById('msgList');
-  const me=document.createElement('div');me.className='msg me';
-  me.innerHTML=`<div class="av">${username[0].toUpperCase()}</div><div class="b">${escHtml(text)}<div class="ts">${now()}</div></div>`;
-  list.appendChild(me);list.scrollTop=list.scrollHeight;
-
-  // Thinking
-  const bot=document.createElement('div');bot.className='msg bot';
-  bot.innerHTML=`<div class="av">🧠</div><div class="b"><div class="tds"><span></span><span></span><span></span></div></div>`;
-  list.appendChild(bot);list.scrollTop=list.scrollHeight;
-
-  try{
-    const r=await fetch('/api/chat',{
-      method:'POST',headers:{'Content-Type':'application/json',...(token?{Authorization:'Bearer '+token}:{})},
-      body:JSON.stringify({message:text,session_id:'web-'+Date.now()})
-    });
-    if(!r.ok){const d=await r.json();throw new Error(d.detail||'请求失败')}
-    const d=await r.json();
-    bot.innerHTML=`<div class="av">🧠</div><div class="b">${escHtml(d.reply)}<div class="ts">${now()} · <span class="cit" onclick="showCitation()">📖 查看来源</span></div></div>`;
-    list.scrollTop=list.scrollHeight;
-    // Store citations for modal
-    window._lastCitations=d.sources||[];
-  }catch(e){bot.innerHTML=`<div class="av">🧠</div><div class="b">请求失败：${escHtml(e.message)}<div class="ts">${now()}</div></div>`}
-  thinking=false;btn.disabled=false;input.focus();list.scrollTop=list.scrollHeight;
-}
-
-function showCitation(){
-  const items=window._lastCitations||[];
-  const list=document.getElementById('citList');
-  if(!items.length){list.innerHTML='<div style="color:var(--text-muted);text-align:center;padding:20px">暂无引用来源</div>'}
-  else{list.innerHTML=items.map((s,i)=>`<div class="cit-it"><span class="idx">#${i+1}</span>${escHtml(s||'')}</div>`).join('')}
-  document.getElementById('citModal').classList.add('show');
-}
-
-function escHtml(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML}
+function showCitation(){const items=window._lastCitations||[],el=document.getElementById('citList');if(!items.length)el.innerHTML='<div style="color:var(--gray-400);text-align:center;padding:24px">暂无来源</div>';else el.innerHTML=items.map((s,i)=>`<div class="cit-it"><span class="idx">#${i+1}</span>${esc(s||'')}</div>`).join('');document.getElementById('citModal').classList.add('show')}
+function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML}
 function now(){const d=new Date();return d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0')}
-
-// Auto-resize textarea
-document.getElementById('chatInput').addEventListener('input',function(){
-  this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px';
-});
+function fmtTime(s){if(!s)return'';try{const d=new Date(s);return(d.getMonth()+1)+'/'+d.getDate()+' '+d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0')}catch(e){return''}}
+document.getElementById('chatInput').addEventListener('input',function(){this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px'});
 </script>
 </body>
 </html>
