@@ -100,12 +100,10 @@ cp .env.example .env
 
 ```bash
 # 启动 Web 服务（推荐使用离线模式避免 SSL 问题）
-set HF_HUB_OFFLINE=1 && uvicorn app.main:app --reload --port 8765
+set HF_HUB_OFFLINE=1 && uvicorn app.main:app --reload
 ```
 
-服务启动后，打开浏览器访问 `http://localhost:8765/login` 即可进入登录页面。
-
-默认端口为 `8765`，可在启动命令中通过 `--port` 参数修改。
+服务启动后，打开浏览器访问部署地址即可进入登录页面。
 
 ### 访问地址
 
@@ -116,7 +114,7 @@ set HF_HUB_OFFLINE=1 && uvicorn app.main:app --reload --port 8765
 | ⚙️ B 端管理 | `/admin/` | 管理后台（需管理员登录） |
 | 📖 API 文档 | `/docs` | Swagger 文档 |
 
-> 以上路径均相对于服务部署地址，例如部署在 `http://localhost:8765` 则对应 `http://localhost:8765/login`。
+> 以上路径均相对于服务部署地址。例如本地默认部署在 `http://localhost:8000`，则管理后台为 `http://localhost:8000/admin/`。
 
 ### 默认管理员账号
 
@@ -202,7 +200,7 @@ LangFlow-QnA/
 
 ## API 文档
 
-启动服务后访问 `/docs` 查看完整的 Swagger 文档（例如部署在 `http://localhost:8765` 则访问 `http://localhost:8765/docs`）。
+启动服务后访问 `/docs` 查看完整的 Swagger 文档。
 
 | 接口 | 方法 | 说明 |
 |------|------|------|
@@ -255,7 +253,7 @@ curl -X POST https://your-domain.com/api/documents/upload \
   -F "file=@report.txt"
 ```
 
-> 将 `your-domain.com` 替换为实际部署地址，本地开发可用 `localhost:8765`。
+> 将 `your-domain.com` 替换为实际部署地址，本地开发可用 `localhost` 加端口号。
 
 ---
 

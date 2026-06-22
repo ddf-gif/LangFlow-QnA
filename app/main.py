@@ -4,8 +4,10 @@ FastAPI 应用入口。
 启动:
     uvicorn app.main:app --reload
 访问:
-    http://127.0.0.1:8000  — 前端聊天界面
-    http://127.0.0.1:8000/docs  — API 文档
+    /        — C 端问答界面
+    /admin/  — B 端管理后台
+    /login   — 登录/注册
+    /docs    — API 文档
 """
 from pathlib import Path
 
