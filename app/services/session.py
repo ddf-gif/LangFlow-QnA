@@ -21,5 +21,13 @@ class SessionManager:
         session = self.get_or_create(session_id)
         return session["message_count"]
 
+    def total_count(self) -> int:
+        """所有会话的消息总数（供数据看板统计使用）。"""
+        return sum(s.get("message_count", 0) for s in self._sessions.values())
+
+    def all_sessions(self) -> dict:
+        """返回全部会话（调试 / 统计用）。"""
+        return dict(self._sessions)
+
 
 session_manager = SessionManager()

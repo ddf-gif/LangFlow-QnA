@@ -1,987 +1,264 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>LangFlow · 智能知识库管理平台</title>
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>LangFlow · 知识问答</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='28' font-size='28'>🧠</text></svg>"/>
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 :root{
-  --primary:#4A7BA7;--primary-hover:#3B6390;--primary-light:#E8EFF6;--primary-subtle:#F3F7FB;
-  --accent:#5C8FBF;--accent-light:#EAF1F8;
-  --bg:#F4F6FA;--surface:#FFFFFF;--surface-hover:#F8F9FC;
-  --shadow-sm:0 1px 2px rgba(0,0,0,0.04);--shadow:0 2px 8px rgba(0,0,0,0.04),0 1px 2px rgba(0,0,0,0.02);--shadow-lg:0 8px 24px rgba(0,0,0,0.06);
-  --text:#1A2332;--text-secondary:#5A6B7F;--text-muted:#8E9DB2;--text-placeholder:#B0BCCD;
-  --border:#E2E6ED;--border-light:#EDF0F5;--divider:#F0F2F6;
-  --success:#4CAF84;--warning:#E8A84C;--error:#D95C5C;--info:#4A7BA7;
-  --sidebar-w:240px;--header-h:56px;
-  --radius:2px;--radius-sm:6px;--radius-card:8px;--radius-panel:12px;
+  --primary:#4A7BA7;--primary-hover:#3B6390;
+  --bg:#F4F6FA;--surface:#FFFFFF;
+  --text:#1A2332;--text-secondary:#5A6B7F;--text-muted:#8E9DB2;
+  --border:#E2E6ED;--border-light:#EDF0F5;
+  --success:#4CAF84;--error:#D95C5C;
+  --shadow:0 2px 8px rgba(0,0,0,0.04);
+  --shadow-lg:0 8px 24px rgba(0,0,0,0.06);
+  --radius:12px;
   --font:'Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;
-  --transition:0.2s cubic-bezier(0.4,0,0.2,1);
+  --transition:0.2s ease;
 }
-.dark{
-  --bg:#141922;--surface:#1B2230;--surface-hover:#212A3A;
-  --shadow:0 2px 8px rgba(0,0,0,0.2);--shadow-lg:0 8px 24px rgba(0,0,0,0.3);
-  --text:#E1E6ED;--text-secondary:#8E9DB2;--text-muted:#5A6B7F;--text-placeholder:#3D4A5E;
-  --border:#263040;--border-light:#1E2737;--divider:#1B2335;
-  --primary-light:#1C2A3D;--primary-subtle:#182235;--accent-light:#1C2D40;
-}
-*{scrollbar-width:thin;scrollbar-color:var(--text-muted) transparent}
 html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--text);font-size:14px;line-height:1.6}
+input,textarea,button,select{font-family:var(--font);font-size:14px}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
 
-.app-l{display:flex;height:100vh;overflow:hidden}
-.side{width:var(--sidebar-w);background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;transition:width var(--transition)}
-.side.hide{width:0;overflow:hidden;border:none}
-.main{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden}
-.hdr{height:var(--header-h);display:flex;align-items:center;padding:0 24px;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0;gap:12px}
-.hdr-l{display:flex;align-items:center;gap:10px}
-.hdr-c{flex:1;max-width:480px;margin:0 auto}
-.hdr-r{display:flex;align-items:center;gap:6px}
-.icon-btn{width:32px;height:32px;border:none;background:transparent;color:var(--text-secondary);border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all var(--transition);font-size:16px}
-.icon-btn:hover{background:var(--surface-hover);color:var(--text)}
-.side-toggle{font-size:18px;padding:0 4px}
-.search-box{display:flex;align-items:center;background:var(--bg);border:1px solid var(--border);border-radius:20px;padding:0 14px}
-.search-box:focus-within{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-light)}
-.search-box .ic{color:var(--text-muted);font-size:13px;margin-right:6px;flex-shrink:0}
-.search-box input{flex:1;border:none;background:transparent;padding:6px 0;font-size:13px;color:var(--text);outline:none;font-family:var(--font)}
-.search-box input::placeholder{color:var(--text-placeholder)}
-.u-av{width:30px;height:30px;border-radius:50%;background:var(--primary-light);color:var(--primary);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;cursor:pointer}
-.side-hdr{height:var(--header-h);display:flex;align-items:center;padding:0 16px;border-bottom:1px solid var(--border);gap:10px}
-.side-hdr .lg{width:28px;height:28px;background:var(--primary);border-radius:6px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:700}
-.side-hdr .nm{font-size:15px;font-weight:600}
-.side-bd{flex:1;overflow-y:auto;padding:10px 8px}
-.nav-g{margin-bottom:18px}
-.nav-g-t{font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.8px;padding:0 8px;margin-bottom:6px}
-.nav-it{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:6px;cursor:pointer;color:var(--text-secondary);transition:all var(--transition);font-size:13px;font-weight:500}
-.nav-it:hover{background:var(--surface-hover);color:var(--text)}
-.nav-it.act{background:var(--primary-light);color:var(--primary);font-weight:600}
-.nav-it .ic{width:20px;text-align:center;font-size:15px;flex-shrink:0}
-.nav-it .bd{margin-left:auto;background:var(--primary-subtle);color:var(--primary);font-size:10px;padding:0 7px;border-radius:10px;font-weight:600}
-.nav-it .ct{font-size:11px;color:var(--text-muted)}
-.nav-div{height:1px;background:var(--divider);margin:6px 8px}
+/* Layout */
+.app{display:flex;flex-direction:column;height:100vh;max-width:900px;margin:0 auto;padding:0 16px}
 
-/* ── Dashboard ── */
-.dash{flex:1;overflow-y:auto;padding:24px 28px 32px}
-.dash-hdr{margin-bottom:24px}
-.dash-hdr h1{font-size:20px;font-weight:600}
-.dash-hdr p{font-size:13px;color:var(--text-muted);margin-top:2px}
-.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px}
-.stat-c{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-card);padding:18px 20px}
-.stat-c:hover{border-color:var(--primary-light);box-shadow:var(--shadow-lg)}
-.stat-c .top{display:flex;align-items:flex-start;justify-content:space-between}
-.stat-c .top .lbl{font-size:12px;color:var(--text-muted);font-weight:500;margin-bottom:4px}
-.stat-c .top .val{font-size:28px;font-weight:700;letter-spacing:-0.5px}
-.stat-c .top .ic{width:38px;height:38px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px}
-.stat-c .btm{display:flex;align-items:center;gap:6px;margin-top:8px;font-size:12px}
-.stat-c .btm .chg{display:inline-flex;align-items:center;gap:2px;padding:0 6px;border-radius:4px;font-weight:600}
-.stat-c .btm .chg.up{color:var(--success);background:rgba(76,175,132,0.1)}
-.stat-c .btm .chg.down{color:var(--error);background:rgba(217,92,92,0.1)}
-.row-2{display:grid;grid-template-columns:1fr 280px;gap:16px;margin-bottom:20px}
-.chart-c{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-card);padding:18px 20px}
-.chart-c .ch-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
-.chart-c .ch-hdr h3{font-size:14px;font-weight:600}
-.chart-svg{width:100%;height:200px}
-.chart-svg .grid-l{stroke:var(--divider);stroke-width:1;stroke-dasharray:3,3}
-.chart-svg .area{fill:url(#areaGrad)}
-.chart-svg .line{fill:none;stroke:var(--primary);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.chart-svg .dot{fill:var(--primary);r:3;cursor:pointer}
-.chart-svg .axis-l{fill:var(--text-muted);font-size:10px;font-family:var(--font)}
-.chart-svg .axis-lb{fill:var(--text-muted);font-size:10px;font-family:var(--font);text-anchor:middle}
-.quick-c{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-card);padding:18px 20px}
-.quick-c h3{font-size:14px;font-weight:600;margin-bottom:12px}
-.quick-g{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.quick-it{padding:12px;border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:all var(--transition);text-align:center}
-.quick-it:hover{border-color:var(--primary);background:var(--primary-subtle)}
-.quick-it .ic{font-size:22px;margin-bottom:4px}
-.quick-it .lb{font-size:12px;color:var(--text-secondary);font-weight:500}
-.quick-it .sb{font-size:10px;color:var(--text-muted);margin-top:1px}
-.tbl-c{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-card);padding:18px 20px;margin-bottom:60px}
-.tbl-c .tbl-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.tbl-c .tbl-hdr h3{font-size:14px;font-weight:600}
-.tbl-c table{width:100%;border-collapse:collapse}
-.tbl-c td,.tbl-c th{text-align:left;padding:10px 12px;font-size:12px;border-bottom:1px solid var(--divider)}
-.tbl-c th{color:var(--text-muted);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.5px}
-.tbl-c td{color:var(--text-secondary)}
-.tbl-c td:first-child{font-weight:500;color:var(--text)}
-.tbl-c tr:hover td{background:var(--surface-hover)}
-.st-tag{display:inline-block;padding:1px 8px;border-radius:10px;font-size:11px;font-weight:500}
-.st-tag.suc{background:rgba(76,175,132,0.1);color:var(--success)}
-.st-tag.pen{background:rgba(232,168,76,0.1);color:var(--warning)}
-.st-tag.fail{background:rgba(217,92,92,0.1);color:var(--error)}
-
-/* ── Chat Page: KB side + Chat panel ── */
-.chat-page{flex:1;display:flex;overflow:hidden}
-.chat-page .kb-side{width:250px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow:hidden}
-.chat-page .kb-side-hdr{display:flex;align-items:center;justify-content:space-between;padding:14px;border-bottom:1px solid var(--border)}
-.chat-page .kb-side-hdr h3{font-size:13px;font-weight:600}
-.chat-page .kb-side-hdr .rbtn{font-size:11px;color:var(--text-muted);cursor:pointer;padding:2px 8px;border-radius:4px;border:1px solid transparent}
-.chat-page .kb-side-hdr .rbtn:hover{color:var(--error);border-color:var(--border)}
-.kbl{flex:1;overflow-y:auto;padding:6px 8px}
-.kbo{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:6px;cursor:pointer;border:1px solid transparent;margin-bottom:3px;transition:all var(--transition)}
-.kbo:hover{background:var(--surface-hover)}
-.kbo.chk{border-color:var(--primary-light);background:var(--primary-subtle)}
-.kbo .cb{width:16px;height:16px;border:2px solid var(--border);border-radius:3px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:8px;color:transparent;transition:all var(--transition)}
-.kbo.chk .cb{border-color:var(--primary);background:var(--primary);color:#fff}
-.kbo .ki{font-size:15px;flex-shrink:0}
-.kbo .kn{flex:1;font-size:12px;font-weight:500;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.kbo .kc{font-size:10px;color:var(--text-muted)}
-.kbo .ks{width:5px;height:5px;border-radius:50%;flex-shrink:0}
-.kbo .ks.on{background:var(--success)}
-.kbo .ks.off{background:var(--text-muted)}
-.kb-btm{padding:8px 14px;border-top:1px solid var(--border);font-size:11px;color:var(--text-muted);display:flex;gap:12px}
-
-.chat-page .cp{flex:1;display:flex;flex-direction:column;min-width:0}
-.chat-page .ch-h{display:flex;align-items:center;justify-content:space-between;padding:14px 20px 12px;border-bottom:1px solid var(--border);flex-shrink:0}
-.chat-page .ch-h-l{display:flex;align-items:center;gap:10px}
-.chat-page .ch-h-l .av{width:34px;height:34px;border-radius:8px;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px}
-.chat-page .ch-h-l .hi h3{font-size:14px;font-weight:600}
-.chat-page .ch-h-l .hi p{font-size:11px;color:var(--text-muted)}
-.chat-page .ch-h .acts{display:flex;gap:4px}
-.chat-page .cms{flex:1;overflow-y:auto;padding:20px 20px 4px;display:flex;flex-direction:column;gap:16px}
-.cmsg{max-width:80%;padding:10px 16px;border-radius:14px;font-size:13px;line-height:1.7;animation:fM .3s ease}
-@keyframes fM{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-.cmsg.me{align-self:flex-end;background:var(--primary);color:#fff;border-bottom-right-radius:4px}
-.cmsg.bot{align-self:flex-start;background:var(--surface);color:var(--text);border:1px solid var(--border-light);border-bottom-left-radius:4px;box-shadow:var(--shadow-sm)}
-.cmsg .ts{font-size:10px;color:var(--text-muted);margin-top:4px;opacity:.6}
-.cmsg.me .ts{color:rgba(255,255,255,0.5)}
-.cmsg .tds{display:flex;gap:5px;padding:6px 0}
-.cmsg .tds span{width:7px;height:7px;background:var(--primary);border-radius:50%;animation:td 1.2s infinite;opacity:.3}
-.cmsg .tds span:nth-child(2){animation-delay:.15s}
-.cmsg .tds span:nth-child(3){animation-delay:.3s}
-@keyframes td{0%,80%,100%{transform:scale(.6);opacity:.3}40%{transform:scale(1);opacity:1}}
-.cmsg .cit{display:inline-flex;align-items:center;gap:3px;padding:1px 8px;font-size:11px;color:var(--primary);background:var(--primary-subtle);border-radius:10px;cursor:pointer;border:1px solid var(--primary-light);transition:all var(--transition)}
-.cmsg .cit:hover{background:var(--primary-light)}
-.cmsg .ph{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;color:var(--text-muted)}
-.cmsg .ph .pi{font-size:40px;opacity:.2;margin-bottom:4px}
-.cmsg .ph h4{font-size:15px;font-weight:600;color:var(--text-secondary);margin-bottom:4px}
-.cmsg .ph p{font-size:12px}
-
-.chat-page .iw{padding:10px 20px 16px;border-top:1px solid var(--border);flex-shrink:0;background:var(--surface)}
-.chat-page .ir{display:flex;gap:8px;align-items:flex-end}
-.chat-page .ir .tw{flex:1;display:flex;align-items:flex-end;background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:2px;transition:border-color var(--transition)}
-.chat-page .ir .tw:focus-within{border-color:var(--primary);box-shadow:0 0 0 2px var(--primary-light)}
-.chat-page .ir .tw textarea{flex:1;border:none;background:transparent;padding:9px 12px;font-size:13px;outline:none;resize:none;font-family:var(--font);color:var(--text);min-height:40px;max-height:120px}
-.chat-page .ir .tw textarea::placeholder{color:var(--text-placeholder)}
-.chat-page .ir .tw .ab{width:30px;height:30px;border:none;background:transparent;color:var(--text-muted);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px;border-radius:6px;margin:4px}
-.chat-page .ir .tw .ab:hover{color:var(--primary);background:var(--primary-subtle)}
-.chat-page .ir .sb{width:40px;height:40px;border-radius:10px;border:none;background:var(--primary);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px}
-.chat-page .ir .sb:hover{background:var(--primary-hover)}
-.chat-page .ir .sb:disabled{background:var(--text-muted);cursor:not-allowed}
-.chat-page .it{display:flex;gap:14px;padding:6px 4px 0;font-size:11px;color:var(--text-muted)}
-.chat-page .it button{background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:11px;font-family:var(--font);padding:2px 6px;border-radius:4px;display:flex;align-items:center;gap:4px}
-.chat-page .it button:hover{color:var(--text-secondary);background:var(--surface-hover)}
-
-/* ── Source Trace Modal ── */
-.src-m{position:fixed;inset:0;background:rgba(0,0,0,0.35);z-index:100;display:none;align-items:center;justify-content:center;backdrop-filter:blur(2px)}
-.src-m.show{display:flex}
-.src-b{background:var(--surface);border-radius:var(--radius-panel);width:600px;max-height:70vh;display:flex;flex-direction:column;box-shadow:0 16px 48px rgba(0,0,0,0.15);animation:sI .25s ease}
-@keyframes sI{from{opacity:0;transform:translateY(16px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
-.src-h{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 12px;border-bottom:1px solid var(--border)}
-.src-h h3{font-size:14px;font-weight:600;display:flex;align-items:center;gap:6px}
-.src-bd{flex:1;overflow-y:auto;padding:16px 20px}
-.si{padding:12px;border:1px solid var(--border);border-radius:6px;margin-bottom:10px;cursor:pointer;transition:border-color var(--transition)}
-.si:hover{border-color:var(--primary)}
-.si .sih{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--primary);margin-bottom:4px}
-.si .sit{font-size:12px;color:var(--text-secondary);line-height:1.6;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
-.si .sim{display:flex;gap:10px;margin-top:6px;font-size:11px;color:var(--text-muted)}
-.src-f{display:flex;justify-content:flex-end;gap:8px;padding:12px 20px 16px;border-top:1px solid var(--border)}
-
-/* ── Doc Management ── */
-.doc-page{flex:1;display:flex;overflow:hidden}
-.doc-page .dir-panel{width:260px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow:hidden}
-.doc-page .dir-hdr{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--border)}
-.doc-page .dir-hdr h3{font-size:13px;font-weight:600}
-.doc-page .dir-tree{flex:1;overflow-y:auto;padding:6px 8px}
-.dir-it{padding:5px 8px;border-radius:4px;cursor:pointer;display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-secondary);margin-bottom:1px}
-.dir-it:hover{background:var(--surface-hover);color:var(--text)}
-.dir-it.act{background:var(--primary-light);color:var(--primary);font-weight:600}
-.dir-it .ar{font-size:10px;width:14px;text-align:center;flex-shrink:0}
-.dir-it .ar.ex{transform:rotate(90deg)}
-.dir-it .ic{font-size:14px;flex-shrink:0}
-.dir-it .nm{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.dir-it .ct{font-size:11px;color:var(--text-muted)}
-.dir-it .act-row{display:none;gap:2px}
-.dir-it:hover .act-row{display:flex}
-.dir-sub{padding-left:24px}
-.dir-add{padding:6px 10px;margin:4px 8px;border:1px dashed var(--border);border-radius:4px;text-align:center;font-size:12px;color:var(--text-muted);cursor:pointer}
-.dir-add:hover{border-color:var(--primary);color:var(--primary);background:var(--primary-subtle)}
-.doc-page .main-panel{flex:1;display:flex;flex-direction:column;overflow:hidden}
-.doc-toolbar{padding:12px 20px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;border-bottom:1px solid var(--border);background:var(--surface)}
-.doc-toolbar .search-s{display:flex;align-items:center;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:0 10px;width:240px}
-.doc-toolbar .search-s input{flex:1;border:none;background:transparent;padding:6px 0;font-size:13px;color:var(--text);outline:none;font-family:var(--font)}
-.doc-toolbar .search-s .ic{color:var(--text-muted);font-size:13px;margin-right:4px}
-.doc-toolbar .spacer{flex:1}
-.doc-table-wrap{flex:1;overflow:auto;padding:0 20px}
-.doc-table{width:100%;border-collapse:collapse;font-size:13px}
-.doc-table th{text-align:left;padding:10px 8px;font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;border-bottom:1px solid var(--divider);position:sticky;top:0;background:var(--bg);z-index:2}
-.doc-table td{padding:10px 8px;border-bottom:1px solid var(--divider);color:var(--text-secondary)}
-.doc-table tr:hover td{background:var(--surface-hover)}
-.doc-table td:first-child{width:30px}
-.doc-table td:nth-child(2){color:var(--text);font-weight:500}
-.doc-table input[type=checkbox]{width:14px;height:14px;accent-color:var(--primary);cursor:pointer}
-.prog-bar{width:80px;height:5px;background:var(--border-light);border-radius:3px;overflow:hidden;display:inline-block}
-.prog-bar .fill{height:100%;border-radius:3px}
-.prog-bar .fill.done{background:var(--success)}
-.prog-bar .fill.ing{background:var(--warning)}
-.doc-format{display:inline-block;padding:1px 7px;border-radius:4px;font-size:11px;font-weight:600;background:var(--primary-subtle);color:var(--primary)}
-.doc-pagination{display:flex;align-items:center;justify-content:space-between;padding:12px 20px 16px;border-top:1px solid var(--border);background:var(--surface);font-size:12px;color:var(--text-muted)}
-.doc-pagination .pg{display:flex;gap:4px}
-.doc-pagination .pg button{min-width:28px;height:28px;border:1px solid var(--border);border-radius:4px;background:var(--surface);color:var(--text-secondary);cursor:pointer;font-size:12px;font-family:var(--font)}
-.doc-pagination .pg button:hover{border-color:var(--primary);color:var(--primary)}
-.doc-pagination .pg button.act{background:var(--primary);border-color:var(--primary);color:#fff}
-.btn{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:6px;font-size:13px;font-weight:500;cursor:pointer;border:none;font-family:var(--font);white-space:nowrap}
+/* Header */
+.hdr{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);flex-shrink:0;gap:12px}
+.hdr-l{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.hdr-l .logo{font-size:22px;line-height:1}
+.hdr-l .title{font-size:16px;font-weight:600;color:var(--text)}
+.hdr-c{flex:1;min-width:0;display:flex;align-items:center;gap:8px}
+.hdr-c select{padding:6px 10px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);font-size:13px;max-width:180px;cursor:pointer}
+.hdr-c select:focus{outline:none;border-color:var(--primary)}
+.hdr-r{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.btn{padding:7px 16px;border-radius:8px;border:none;cursor:pointer;font-size:13px;font-weight:500;transition:all var(--transition)}
 .btn-primary{background:var(--primary);color:#fff}
 .btn-primary:hover{background:var(--primary-hover)}
 .btn-outline{background:transparent;border:1px solid var(--border);color:var(--text-secondary)}
-.btn-outline:hover{border-color:var(--primary);color:var(--primary);background:var(--primary-light)}
-.btn-sm{padding:4px 10px;font-size:12px}
+.btn-outline:hover{border-color:var(--primary);color:var(--primary)}
+.btn-ghost{background:transparent;border:none;color:var(--text-muted);padding:6px 10px}
+.btn-ghost:hover{color:var(--text)}
+.btn-sm{padding:5px 10px;font-size:12px}
+.user-badge{display:flex;align-items:center;gap:6px;padding:4px 10px 4px 4px;border-radius:20px;background:var(--primary-light, #E8EFF6);color:var(--primary);font-size:12px;font-weight:500}
+.user-badge .av{width:24px;height:24px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px}
 
-/* ── Preview Modal ── */
-.preview-modal{position:fixed;inset:0;background:rgba(0,0,0,0.35);z-index:100;display:none;align-items:center;justify-content:center;backdrop-filter:blur(2px)}
-.preview-modal.show{display:flex}
-.preview-box{background:var(--surface);border-radius:var(--radius-panel);width:720px;max-height:84vh;display:flex;flex-direction:column;box-shadow:0 16px 48px rgba(0,0,0,0.15);animation:sI .25s ease}
-.preview-hdr{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 12px;border-bottom:1px solid var(--border)}
-.preview-hdr .info{display:flex;align-items:center;gap:8px}
-.preview-hdr .info .name{font-size:14px;font-weight:600;text-overflow:ellipsis;overflow:hidden;white-space:nowrap}
-.preview-body{flex:1;overflow-y:auto;padding:16px 20px}
-.preview-meta{display:flex;gap:20px;margin-bottom:14px;font-size:12px;color:var(--text-secondary)}
-.preview-content{background:var(--bg);border:1px solid var(--border-light);border-radius:6px;padding:14px 16px;font-size:13px;line-height:1.8;white-space:pre-wrap;font-family:var(--font);color:var(--text-secondary);max-height:300px;overflow-y:auto}
-.preview-chunks{margin-top:14px}
-.preview-chunks h4{font-size:12px;font-weight:600;color:var(--text-muted);margin-bottom:8px}
-.chunk-list{display:flex;flex-wrap:wrap;gap:6px}
-.chunk-tag{padding:4px 12px;border:1px solid var(--border);border-radius:4px;font-size:11px;cursor:pointer;color:var(--text-secondary)}
-.chunk-tag:hover{border-color:var(--primary);color:var(--primary);background:var(--primary-subtle)}
-.chunk-tag.act{border-color:var(--primary);background:var(--primary-light);color:var(--primary);font-weight:600}
-.preview-footer{display:flex;justify-content:flex-end;gap:8px;padding:12px 20px 16px;border-top:1px solid var(--border)}
-/* ── Permissions ── */
-.perm-wrap{display:flex;flex:1;overflow:hidden}
-.perm-wrap .pl{width:280px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0}
-.perm-wrap .pl-h{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--border)}
-.perm-wrap .pl-h h3{font-size:13px;font-weight:600}
-.perm-wrap .pl-l{flex:1;overflow-y:auto;padding:6px 8px}
-.perm-wrap .pl-l .ri{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:4px;cursor:pointer;font-size:12px;color:var(--text-secondary);margin-bottom:2px}
-.perm-wrap .pl-l .ri:hover{background:var(--surface-hover);color:var(--text)}
-.perm-wrap .pl-l .ri.act{background:var(--primary-light);color:var(--primary);font-weight:600}
-.perm-wrap .pl-l .ri .ic{font-size:14px}
-.perm-wrap .pl-l .ri .nm{flex:1}
-.perm-wrap .pl-l .ri .ct{font-size:10px;color:var(--text-muted)}
-.perm-wrap .pr{flex:1;display:flex;flex-direction:column;overflow:hidden}
-.perm-wrap .pr-h{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-bottom:1px solid var(--border);flex-shrink:0}
-.perm-wrap .pr-h h3{font-size:14px;font-weight:600}
-.perm-wrap .pr-h .hint{font-size:11px;color:var(--text-muted)}
-.perm-wrap .pr-t{flex:1;overflow:auto;padding:0 20px}
-.perm-wrap .pr-t table{width:100%;border-collapse:collapse;font-size:13px}
-.perm-wrap .pr-t th{text-align:left;padding:9px 8px;font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid var(--divider);position:sticky;top:0;background:var(--bg);z-index:2}
-.perm-wrap .pr-t td{padding:9px 8px;border-bottom:1px solid var(--divider);color:var(--text-secondary)}
-.perm-wrap .pr-t tr:hover td{background:var(--surface-hover)}
-.perm-wrap .pr-t td:first-child{color:var(--text);font-weight:500}
-.perm-wrap .pr-t .perm-tag{display:inline-block;padding:1px 7px;border-radius:10px;font-size:11px;font-weight:500}
-.perm-wrap .pr-t .perm-tag.r{background:rgba(76,175,132,0.1);color:var(--success)}
-.perm-wrap .pr-t .perm-tag.w{background:rgba(232,168,76,0.1);color:var(--warning)}
-.perm-wrap .pr-t .perm-tag.x{background:rgba(74,123,167,0.1);color:var(--primary)}
-/* Permission modal */
-.perm-m{position:fixed;inset:0;background:rgba(0,0,0,0.35);z-index:100;display:none;align-items:center;justify-content:center;backdrop-filter:blur(2px)}
-.perm-m.show{display:flex}
-.perm-b{background:var(--surface);border-radius:var(--radius-panel);width:480px;max-height:80vh;display:flex;flex-direction:column;box-shadow:0 16px 48px rgba(0,0,0,0.15);animation:sI .25s ease}
-.perm-h{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 12px;border-bottom:1px solid var(--border)}
-.perm-h h3{font-size:14px;font-weight:600}
-.perm-bd{flex:1;overflow-y:auto;padding:14px 20px}
-.perm-bd .pf{margin-bottom:12px}
-.perm-bd .pf:last-child{margin-bottom:0}
-.perm-bd .pf .fl{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
-.perm-bd .pf .fl .l{font-size:13px;font-weight:500;color:var(--text)}
-.perm-bd .pf .fl .h{font-size:11px;color:var(--text-muted)}
-.perm-bd .pf input[type=text],.perm-bd .pf select{width:100%;padding:6px 10px;border:1px solid var(--border);border-radius:4px;font-size:13px;outline:none;font-family:var(--font);color:var(--text);background:var(--bg);box-sizing:border-box}
-.perm-bd .pf input:focus,.perm-bd .pf select:focus{border-color:var(--primary);box-shadow:0 0 0 2px var(--primary-light)}
-.perm-bd .pt{font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin:12px 0 6px}
-.perm-bd .pg{display:flex;flex-direction:column;gap:6px}
-.perm-bd .pg .po{display:flex;align-items:center;gap:10px;padding:7px 10px;border:1px solid var(--border);border-radius:4px;cursor:pointer;font-size:12px;transition:all var(--transition)}
-.perm-bd .pg .po:hover{border-color:var(--primary-light);background:var(--primary-subtle)}
-.perm-bd .pg .po.chk{border-color:var(--primary);background:var(--primary-subtle)}
-.perm-bd .pg .po .cb{width:15px;height:15px;border:2px solid var(--border);border-radius:3px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:7px;color:transparent}
-.perm-bd .pg .po.chk .cb{border-color:var(--primary);background:var(--primary);color:#fff}
-.perm-bd .pg .po .kn{font-size:12px;color:var(--text)}
-.perm-bd .pg .po .kp{display:flex;gap:4px;margin-left:auto}
-.perm-bd .pg .po .kp .kt{font-size:10px;padding:1px 6px;border-radius:8px;background:var(--border-light);color:var(--text-muted)}
-.perm-bd .pg .po.chk .kp .kt{background:var(--primary-subtle);color:var(--primary)}
-.perm-f{display:flex;justify-content:flex-end;gap:8px;padding:12px 20px 16px;border-top:1px solid var(--border)}
-.perm-cks{display:flex;flex-wrap:wrap;gap:6px}
-.perm-cks .co{display:flex;align-items:center;gap:4px;padding:5px 12px;border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:12px;color:var(--text-secondary);transition:all var(--transition);font-weight:500}
-.perm-cks .co:hover{border-color:var(--primary-light);background:var(--surface-hover)}
-.perm-cks .co.chk{border-color:var(--primary);background:var(--primary-light);color:var(--primary);font-weight:600}
+/* Chat */
+.chat{flex:1;display:flex;flex-direction:column;min-height:0;padding:16px 0}
+.msgs{flex:1;overflow-y:auto;padding:8px 0;display:flex;flex-direction:column;gap:16px;scroll-behavior:smooth}
+.msgs:empty::after{content:'💬 选择知识库后开始提问';display:flex;align-items:center;justify-content:center;height:100%;color:var(--text-muted);font-size:15px}
+.msg{display:flex;gap:10px;max-width:85%;animation:fI .3s ease}
+.msg.me{flex-direction:row-reverse;align-self:flex-end}
+.msg.bot{align-self:flex-start}
+.msg .av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.msg.me .av{background:var(--primary);color:#fff;order:1}
+.msg.bot .av{background:#E8EFF6;order:0}
+.msg .b{background:var(--surface);border-radius:var(--radius);padding:12px 16px;box-shadow:var(--shadow);line-height:1.7;white-space:pre-wrap;word-break:break-word}
+.msg.me .b{background:var(--primary);color:#fff;border-bottom-right-radius:4px}
+.msg.bot .b{border-bottom-left-radius:4px}
+.msg .b .ts{font-size:11px;color:var(--text-muted);margin-top:6px}
+.msg.me .b .ts{color:rgba(255,255,255,0.7)}
+.msg .b .cit{color:var(--primary);cursor:pointer;font-size:12px;font-weight:500}
+.msg.me .b .cit{color:rgba(255,255,255,0.9)}
 
-/* ── Role Management ── */
-#page-roles.act{position:relative}
-.role-wrap{flex:1;overflow-y:auto;padding:22px 28px 60px;width:100%;box-sizing:border-box}
-.role-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
-.role-hdr-l h1{font-size:17px;font-weight:600}
-.role-hdr-l p{font-size:12px;color:var(--text-muted);margin-top:1px}
-.role-hdr-r{display:flex;gap:8px}
-.role-toolbar{display:flex;gap:8px;margin-bottom:12px;align-items:center;flex-wrap:wrap}
-.role-toolbar .rs{display:flex;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:0 10px;width:200px}
-.role-toolbar .rs:focus-within{border-color:var(--primary);box-shadow:0 0 0 2px var(--primary-light)}
-.role-toolbar .rs input{flex:1;border:none;background:transparent;padding:5px 0;font-size:13px;color:var(--text);outline:none;font-family:var(--font)}
-.role-toolbar .rs .ic{color:var(--text-muted);font-size:13px;margin-right:4px}
-.role-toolbar .rf{font-size:12px;color:var(--text-secondary)}
-.role-toolbar .sp{flex:1}
-.role-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden}
-.role-card table{width:100%;border-collapse:collapse}
-.role-card th{text-align:left;padding:10px 12px;font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid var(--divider);background:var(--surface)}
-.role-card td{padding:10px 12px;font-size:13px;color:var(--text-secondary);border-bottom:1px solid var(--divider)}
-.role-card tr:last-child td{border-bottom:none}
-.role-card tr:hover td{background:var(--surface-hover)}
-.role-card td:first-child{font-weight:500;color:var(--text)}
-.role-card .perm-tg{display:inline-block;padding:1px 8px;border-radius:10px;font-size:11px;font-weight:500}
-.role-card .perm-tg.r{background:rgba(76,175,132,0.1);color:var(--success)}
-.role-card .perm-tg.x{background:rgba(74,123,167,0.1);color:var(--primary)}
-.role-card .perm-tg.v{background:rgba(142,157,178,0.1);color:var(--text-muted)}
-.role-card .act-btns{display:flex;gap:2px}
-.role-card .act-btns button{width:26px;height:26px;border:none;background:transparent;color:var(--text-muted);cursor:pointer;border-radius:4px;font-size:13px;display:flex;align-items:center;justify-content:center}
-.role-card .act-btns button:hover{background:var(--surface-hover);color:var(--primary)}
-.role-pagi{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;font-size:12px;color:var(--text-muted)}
-.role-pagi .pg{display:flex;gap:4px}
-.role-pagi .pg button{min-width:26px;height:26px;border:1px solid var(--border);border-radius:4px;background:var(--surface);color:var(--text-secondary);cursor:pointer;font-size:12px;font-family:var(--font)}
-.role-pagi .pg button:hover{border-color:var(--primary);color:var(--primary)}
-.role-pagi .pg button.act{background:var(--primary);border-color:var(--primary);color:#fff}
+/* Thinking indicator */
+.tds{display:flex;gap:4px;padding:4px 0}
+.tds span{width:6px;height:6px;border-radius:50%;background:var(--text-muted);animation:tp 1.4s infinite}
+.tds span:nth-child(2){animation-delay:.2s}
+.tds span:nth-child(3){animation-delay:.4s}
+@keyframes tp{0%,80%,100%{opacity:.3}40%{opacity:1}}
+@keyframes fI{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 
-/* ── Archived Page ── */
-#page-archived.act{position:relative}
-.arch-wrap{position:absolute;inset:0;overflow-y:auto;padding:20px 28px 28px}
-.arch-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
-.arch-hdr-l h1{font-size:17px;font-weight:600}
-.arch-hdr-l p{font-size:12px;color:var(--text-muted);margin-top:1px}
-.arch-hdr-r{display:flex;gap:8px}
-.arch-toolbar{display:flex;gap:8px;margin-bottom:12px;align-items:center;flex-wrap:wrap}
-.arch-toolbar .as{display:flex;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:0 10px;width:200px}
-.arch-toolbar .as input{flex:1;border:none;background:transparent;padding:5px 0;font-size:13px;color:var(--text);outline:none;font-family:var(--font)}
-.arch-toolbar .as .ic{color:var(--text-muted);font-size:13px;margin-right:4px}
-.arch-toolbar .af{font-size:12px;color:var(--text-secondary)}.arch-toolbar .af select{padding:5px 8px;border:1px solid var(--border);border-radius:4px;font-size:12px;font-family:var(--font);color:var(--text-secondary);background:var(--surface)}
-.arch-toolbar .sp{flex:1}
-.arch-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden}
-.arch-card table{width:100%;border-collapse:collapse}
-.arch-card th{text-align:left;padding:10px 12px;font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid var(--divider);background:var(--surface)}
-.arch-card td{padding:10px 12px;font-size:13px;color:var(--text-secondary);border-bottom:1px solid var(--divider)}
-.arch-card tr:last-child td{border-bottom:none}
-.arch-card tr:hover td{background:var(--surface-hover)}
-.arch-card td:first-child{font-weight:500;color:var(--text)}
-.arch-type{display:inline-block;padding:1px 8px;border-radius:10px;font-size:11px;font-weight:500}
-.arch-type.kb{background:rgba(76,175,132,0.1);color:var(--success)}
-.arch-type.ag{background:rgba(74,123,167,0.1);color:var(--primary)}
-.arch-type.rl{background:rgba(142,157,178,0.1);color:var(--text-muted)}
-.arch-card .act-btns{display:flex;gap:2px}
-.arch-card .act-btns button{width:26px;height:26px;border:none;background:transparent;color:var(--text-muted);cursor:pointer;border-radius:4px;font-size:13px;display:flex;align-items:center;justify-content:center}
-.arch-card .act-btns button:hover{background:var(--surface-hover);color:var(--primary)}
-.arch-pagi{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;font-size:12px;color:var(--text-muted)}
-.arch-pagi .pg{display:flex;gap:4px}
-.arch-pagi .pg button{min-width:26px;height:26px;border:1px solid var(--border);border-radius:4px;background:var(--surface);color:var(--text-secondary);cursor:pointer;font-size:12px;font-family:var(--font)}
-.arch-pagi .pg button.act{background:var(--primary);border-color:var(--primary);color:#fff}
-.arch-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;color:var(--text-muted)}
-.arch-empty .ei{font-size:48px;opacity:.2;margin-bottom:8px}
-.arch-empty p{font-size:13px}
-.arch-empty .es{font-size:11px;margin-top:2px}
+/* Input */
+.inp{display:flex;gap:8px;padding:12px 0;border-top:1px solid var(--border);flex-shrink:0;align-items:flex-end}
+.inp textarea{flex:1;padding:10px 14px;border:1px solid var(--border);border-radius:var(--radius);resize:none;outline:none;min-height:44px;max-height:120px;line-height:1.5;transition:border var(--transition)}
+.inp textarea:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(74,123,167,0.1)}
+.inp .send{width:44px;height:44px;border-radius:var(--radius);border:none;background:var(--primary);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:20px;transition:all var(--transition);flex-shrink:0}
+.inp .send:hover{background:var(--primary-hover)}
+.inp .send:disabled{opacity:.4;cursor:not-allowed}
 
-/* ── Agent Config ── */
-.ag-wrap{flex:1;overflow-y:auto;padding:20px 28px 32px;box-sizing:border-box}
-.ag-hdr{margin-bottom:16px}
-.ag-hdr h1{font-size:18px;font-weight:600;display:flex;align-items:center;gap:8px}
-.ag-hdr p{font-size:12px;color:var(--text-muted);margin-top:3px}
-.ag-c{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-card);margin-bottom:12px;overflow:hidden;box-shadow:var(--shadow-sm);transition:box-shadow var(--transition)}
-.ag-c:hover{box-shadow:var(--shadow)}
-.ag-ch{display:flex;align-items:center;justify-content:space-between;padding:13px 18px;cursor:pointer;user-select:none}
-.ag-ch:hover{background:var(--surface-hover)}
-.ag-ch .ct{font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px;color:var(--text)}
-.ag-ch .ct .ci{font-size:14px;width:22px;height:22px;display:flex;align-items:center;justify-content:center;background:var(--primary-light);color:var(--primary);border-radius:6px;flex-shrink:0}
-.ag-ch .ar{font-size:10px;color:var(--text-muted);transition:transform .2s}
-.ag-ch .ar.up{transform:rotate(180deg)}
-.ag-cb{padding:16px 18px 18px;border-top:1px solid var(--border-light)}
-.ag-cb.hide{display:none}
-.ag-f{margin-bottom:16px}
-.ag-f:last-child{margin-bottom:0}
-.ag-f .fl{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:6px;gap:12px}
-.ag-f .fl .l{font-size:13px;font-weight:600;color:var(--text)}
-.ag-f .fl .h{font-size:11px;color:var(--text-muted);text-align:right}
-.ag-f input[type=text],.ag-f textarea,.ag-f select{width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:13px;outline:none;font-family:var(--font);color:var(--text);background:var(--bg);box-sizing:border-box;transition:border-color var(--transition),box-shadow var(--transition)}
-.ag-f input:focus,.ag-f textarea:focus,.ag-f select:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-light);background:var(--surface)}
-.ag-f textarea{min-height:92px;resize:vertical;line-height:1.6}
-.ag-f .sr{display:flex;align-items:center;gap:12px}
-.ag-f input[type=range]{flex:1;height:4px;-webkit-appearance:none;appearance:none;background:var(--border-light);border-radius:2px;outline:none;cursor:pointer}
-.ag-f input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:16px;height:16px;border-radius:50%;background:var(--primary);border:2px solid var(--surface);box-shadow:var(--shadow-sm);cursor:pointer}
-.ag-f input[type=range]::-moz-range-thumb{width:14px;height:14px;border:2px solid var(--surface);border-radius:50%;background:var(--primary);cursor:pointer}
-.ag-f .sv{font-size:13px;font-weight:600;color:var(--primary);min-width:48px;text-align:center;padding:3px 10px;background:var(--primary-light);border-radius:6px}
-.ag-f .rg{display:flex;gap:8px;flex-wrap:wrap}
-.ag-f .rg .ro{display:flex;align-items:center;gap:5px;padding:7px 14px;border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:12px;color:var(--text-secondary);transition:all var(--transition);font-weight:500}
-.ag-f .rg .ro:hover{border-color:var(--primary-light);background:var(--primary-subtle)}
-.ag-f .rg .ro.act{border-color:var(--primary);background:var(--primary-light);color:var(--primary);font-weight:600}
-.ag-f .rg .ro input{display:none}
-.ag-f select{appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'><path fill='%238E9DB2' d='M6 8L2 4h8z'/></svg>");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px;cursor:pointer}
-.ag-f .ck{display:flex;flex-wrap:wrap;gap:8px}
-.ag-f .ck .co{display:flex;align-items:center;gap:6px;padding:7px 14px;border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:12px;color:var(--text-secondary);transition:all var(--transition);font-weight:500}
-.ag-f .ck .co:hover{border-color:var(--primary-light);background:var(--surface-hover)}
-.ag-f .ck .co.chk{border-color:var(--primary);background:var(--primary-light);color:var(--primary);font-weight:600}
-.ag-f .ck .co input{display:none}
-.ag-btns{display:flex;gap:10px;padding-top:6px}
-.ag-btns .btn{padding:8px 22px;font-size:13px}
-.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#1A2332;color:#fff;padding:10px 22px;border-radius:8px;font-size:13px;z-index:200;opacity:0;transition:all 0.35s cubic-bezier(0.16,1,0.3,1);pointer-events:none;font-family:var(--font)}
-.page{display:none}.page.act{display:flex;flex-direction:column;flex:1;overflow:hidden;min-height:0}
+/* Modal */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:200;display:none;align-items:center;justify-content:center;backdrop-filter:blur(2px)}
+.modal.show{display:flex}
+.modal-b{background:var(--surface);border-radius:var(--radius);width:400px;max-width:90vw;padding:28px 24px 20px;box-shadow:var(--shadow-lg);animation:fI .2s ease}
+.modal-h{font-size:18px;font-weight:600;margin-bottom:20px}
+.modal-f{display:flex;gap:8px;justify-content:flex-end;margin-top:20px}
+.modal .pf{margin-bottom:14px}
+.modal .pf label{display:block;font-size:13px;font-weight:500;color:var(--text-secondary);margin-bottom:4px}
+.modal .pf input{width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;outline:none;transition:border var(--transition)}
+.modal .pf input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(74,123,167,0.1)}
+.modal .pf .err{font-size:12px;color:var(--error);margin-top:3px;display:none}
+.modal-foot{text-align:center;font-size:12px;color:var(--text-muted);margin-top:12px}
+.modal-foot a{cursor:pointer;color:var(--primary);font-weight:500}
 
-@media (max-width:1100px){.stat-row{grid-template-columns:repeat(2,1fr)}.row-2{grid-template-columns:1fr}}
-@media (max-width:680px){.stat-row{grid-template-columns:1fr}.dash{padding:16px}.hdr{padding:0 16px}}
+/* Citation modal */
+.cit-m{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:200;display:none;align-items:center;justify-content:center;backdrop-filter:blur(2px)}
+.cit-m.show{display:flex}
+.cit-b{background:var(--surface);border-radius:var(--radius);width:560px;max-width:90vw;max-height:70vh;display:flex;flex-direction:column;box-shadow:var(--shadow-lg)}
+.cit-h{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 12px;border-bottom:1px solid var(--border)}
+.cit-h h3{font-size:15px;font-weight:600}
+.cit-h .icon-btn{width:30px;height:30px;border:none;background:transparent;color:var(--text-muted);cursor:pointer;border-radius:6px;font-size:18px}
+.cit-h .icon-btn:hover{background:var(--border-light);color:var(--text)}
+.cit-bd{flex:1;overflow-y:auto;padding:16px 20px}
+.cit-it{padding:10px 0;border-bottom:1px solid var(--border-light);font-size:13px;line-height:1.6;color:var(--text-secondary)}
+.cit-it:last-child{border:none}
+.cit-it .idx{display:inline-block;background:var(--primary-light,#E8EFF6);color:var(--primary);border-radius:4px;padding:0 6px;font-size:11px;font-weight:600;margin-right:6px}
+
+/* Toast */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);padding:10px 20px;border-radius:8px;color:#fff;font-size:13px;font-weight:500;z-index:300;opacity:0;transition:all .3s ease;pointer-events:none}
+
+/* Responsive */
+@media(max-width:640px){
+  .app{padding:0 12px}
+  .hdr-c select{max-width:120px;font-size:12px}
+  .msg{max-width:92%}
+  .modal-b{padding:20px 16px}
+}
 </style>
 </head>
 <body>
-<div class="app-l">
-<aside class="side" id="side">
-  <div class="side-hdr"><div class="lg">LQ</div><span class="nm">LangFlow</span></div>
-  <div class="side-bd">
-    <div class="nav-g"><div class="nav-g-t">概览</div>
-      <div class="nav-it act" data-page="dashboard"><span class="ic">📊</span>数据看板</div>
-      <div class="nav-it" data-page="chat"><span class="ic">💬</span>AI 对话<span class="bd">6</span></div>
+
+<div class="app">
+  <!-- Header -->
+  <div class="hdr">
+    <div class="hdr-l">
+      <span class="logo">🧠</span>
+      <span class="title">LangFlow</span>
     </div>
-    <div class="nav-g"><div class="nav-g-t">知识库</div>
-      <div class="nav-it" data-page="docs"><span class="ic">📄</span>文档管理<span class="ct">48</span></div>
-    </div>
-    <div class="nav-g"><div class="nav-g-t">管理</div>
-      <div class="nav-it" data-page="agent"><span class="ic">⚙️</span>Agent 配置</div>
-      <div class="nav-it" data-page="perms"><span class="ic">🔑</span>权限分组</div>
-      <div class="nav-it" data-page="roles"><span class="ic">👤</span>角色管理</div>
-    </div>
-    <div class="nav-div"></div>
-    <div class="nav-it" data-page="archived"><span class="ic">🗂️</span>已归档</div>
-  </div>
-</aside>
-
-<div class="main">
-  <header class="hdr">
-    <div class="hdr-l"><button class="icon-btn side-toggle" onclick="toggleSide()">☰</button></div>
-    <div class="hdr-c"><div class="search-box"><span class="ic">🔍</span><input placeholder="搜索知识库、文档..." /></div></div>
-    <div class="hdr-r">
-      <button class="icon-btn" onclick="toggleDark()" id="themeBtn">🌙</button>
-      <button class="icon-btn">🔔</button>
-      <div class="u-av">管</div>
-    </div>
-  </header>
-
-  <!-- ── Dashboard ── -->
-  <div class="page act" id="page-dashboard">
-    <div class="dash">
-      <div class="dash-hdr"><h1>数据看板</h1><p>今日 AI 问答量 <strong>1,284</strong> 次</p></div>
-      <div class="stat-row">
-        <div class="stat-c"><div class="top"><div><div class="lbl">知识库总数</div><div class="val">12</div></div><div class="ic" style="background:var(--primary-light);color:var(--primary)">📚</div></div><div class="btm"><span class="chg up">↑ 2</span>本月新增</div></div>
-        <div class="stat-c"><div class="top"><div><div class="lbl">文档数量</div><div class="val">1,248</div></div><div class="ic" style="background:rgba(76,175,132,0.1);color:var(--success)">📄</div></div><div class="btm"><span class="chg up">↑ 86</span>本周新增</div></div>
-        <div class="stat-c"><div class="top"><div><div class="lbl">AI 问答总量</div><div class="val">28.6K</div></div><div class="ic" style="background:rgba(232,168,76,0.1);color:var(--warning)">💬</div></div><div class="btm"><span class="chg up">↑ 12.3%</span>较上周</div></div>
-        <div class="stat-c"><div class="top"><div><div class="lbl">检索成功率</div><div class="val">97.2%</div></div><div class="ic" style="background:rgba(232,168,76,0.1);color:var(--warning)">🎯</div></div><div class="btm"><span class="chg down">↓ 0.8%</span>较上周</div></div>
-      </div>
-      <div class="row-2">
-        <div class="chart-c"><div class="ch-hdr"><h3>每日对话访问量</h3></div>
-          <svg class="chart-svg" viewBox="0 0 600 200"><defs><linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--primary)" stop-opacity="0.15"/><stop offset="100%" stop-color="var(--primary)" stop-opacity="0.01"/></linearGradient></defs>
-            <line class="grid-l" x1="50" y1="40" x2="580" y2="40"/><line class="grid-l" x1="50" y1="75" x2="580" y2="75"/><line class="grid-l" x1="50" y1="110" x2="580" y2="110"/><line class="grid-l" x1="50" y1="145" x2="580" y2="145"/><line class="grid-l" x1="50" y1="170" x2="580" y2="170"/>
-            <text class="axis-l" x="44" y="44" text-anchor="end">1.5K</text><text class="axis-l" x="44" y="79" text-anchor="end">1.2K</text><text class="axis-l" x="44" y="114" text-anchor="end">900</text><text class="axis-l" x="44" y="149" text-anchor="end">600</text><text class="axis-l" x="44" y="174" text-anchor="end">300</text>
-            <polygon class="area" points="100,170 100,130 183,100 266,120 350,80 433,95 516,55 516,170"/>
-            <polyline class="line" points="100,130 183,100 266,120 350,80 433,95 516,55"/>
-            <circle class="dot" cx="100" cy="130"/><circle class="dot" cx="183" cy="100"/><circle class="dot" cx="266" cy="120"/><circle class="dot" cx="350" cy="80"/><circle class="dot" cx="433" cy="95"/><circle class="dot" cx="516" cy="55"/>
-          </svg>
-        </div>
-        <div class="quick-c"><h3>快捷入口</h3>
-          <div class="quick-g">
-            <div class="quick-it" onclick="showToast('新建知识库')"><div class="ic">📚</div><div class="lb">新建知识库</div></div>
-            <div class="quick-it" onclick="showToast('上传文档')"><div class="ic">📄</div><div class="lb">上传文档</div></div>
-            <div class="quick-it" onclick="showToast('Agent 配置')"><div class="ic">⚙️</div><div class="lb">Agent 配置</div></div>
-            <div class="quick-it" onclick="showToast('问答记录')"><div class="ic">💬</div><div class="lb">问答记录</div></div>
-          </div>
-        </div>
-      </div>
-      <div class="tbl-c"><div class="tbl-hdr"><h3>最近问答记录</h3></div>
-        <table><thead><tr><th>问题</th><th>知识库</th><th>状态</th><th>时间</th><th>耗时</th></tr></thead>
-          <tbody>
-            <tr><td>2024年营收增长率是多少？</td><td>财务报告</td><td><span class="st-tag suc">成功</span></td><td>14:32</td><td>1.2s</td></tr>
-            <tr><td>员工年假政策是几天？</td><td>人力资源</td><td><span class="st-tag suc">成功</span></td><td>14:15</td><td>0.9s</td></tr>
-            <tr><td>API 限流配置怎么改？</td><td>技术文档</td><td><span class="st-tag pen">索引中</span></td><td>13:48</td><td>2.5s</td></tr>
-            <tr><td>合规审查流程有哪些步骤？</td><td>法务合规</td><td><span class="st-tag suc">成功</span></td><td>11:20</td><td>1.1s</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <!-- ── Chat Page ── -->
-  <div class="page" id="page-chat">
-    <div class="chat-page">
-      <!-- KB Selection Sidebar -->
-      <div class="kb-side">
-        <div class="kb-side-hdr">
-          <h3>📚 知识库源</h3>
-          <span class="rbtn" onclick="resetMemory()">↺ 重置</span>
-        </div>
-        <div class="kbl">
-          <div class="kbo chk" data-kb="finance"><span class="cb">✓</span><span class="ki">💳</span><span class="kn">财务报告</span><span class="kc">12</span><span class="ks on"></span></div>
-          <div class="kbo chk" data-kb="hr"><span class="cb">✓</span><span class="ki">👥</span><span class="kn">人力资源</span><span class="kc">8</span><span class="ks on"></span></div>
-          <div class="kbo chk" data-kb="tech"><span class="cb">✓</span><span class="ki">⚙️</span><span class="kn">技术文档</span><span class="kc">15</span><span class="ks on"></span></div>
-          <div class="kbo" data-kb="legal"><span class="cb">✓</span><span class="ki">📋</span><span class="kn">法务合规</span><span class="kc">5</span><span class="ks on"></span></div>
-          <div class="kbo" data-kb="product"><span class="cb">✓</span><span class="ki">📦</span><span class="kn">产品手册</span><span class="kc">8</span><span class="ks off"></span></div>
-        </div>
-        <div class="kb-btm"><span>已选 3 个知识库</span><span>🔗 35 个片段</span></div>
-      </div>
-      <!-- Chat Panel -->
-      <div class="cp">
-        <div class="ch-h">
-          <div class="ch-h-l"><div class="av">🤖</div><div class="hi"><h3>AI 知识库助手</h3><p>财务 · 人力 · 技术 等 3 个知识库</p></div></div>
-          <div class="acts"><button class="icon-btn" onclick="showSrcModal()">📖</button><button class="icon-btn" onclick="clearChat()">🗑️</button></div>
-        </div>
-        <div class="cms" id="cms">
-          <div class="cmsg ph" id="cph"><div class="pi">💬</div><h4>开始与知识库对话</h4><p>选择左侧知识库，然后开始提问</p></div>
-        </div>
-        <div class="iw">
-          <div class="ir">
-            <div class="tw"><textarea id="ci" rows="1" placeholder="输入问题..." onkeydown="ckey(event)"></textarea><button class="ab" onclick="document.getElementById('chatFile').click()" title="上传附件">📎</button><input type="file" id="chatFile" style="display:none" onchange="showToast('已上传: '+this.files[0].name)" /></div>
-            <button class="sb" id="csb" onclick="csend()">↑</button>
-          </div>
-          <div class="it">
-            <span>Enter 发送 · Shift+Enter 换行</span>
-            <button onclick="clearChat()">🗑️ 清空对话</button>
-            <button onclick="resetMemory()">↺ 重置记忆</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ── Doc Management Page ── -->
-  <div class="page" id="page-docs">
-    <div class="doc-page">
-      <div class="dir-panel">
-        <div class="dir-hdr"><h3>分类目录</h3><button class="icon-btn" style="width:26px;height:26px;font-size:14px" onclick="addFolder()">＋</button></div>
-        <div class="dir-tree" id="dirTree">
-          <div class="dir-it act"><span class="ar ex">▶</span><span class="ic">📂</span><span class="nm">全部文档</span><span class="ct">48</span></div>
-          <div class="dir-sub">
-            <div class="dir-it" draggable="true"><span class="ar ex">▶</span><span class="ic">📂</span><span class="nm">财务报告</span><span class="ct">12</span></div>
-            <div class="dir-sub"><div class="dir-it" draggable="true"><span class="ic">📁</span><span class="nm">2024 年报</span><span class="ct">5</span></div><div class="dir-it" draggable="true"><span class="ic">📁</span><span class="nm">2025 季报</span><span class="ct">7</span></div></div>
-            <div class="dir-it" draggable="true"><span class="ar">▶</span><span class="ic">📂</span><span class="nm">人力资源</span><span class="ct">8</span></div>
-            <div class="dir-it" draggable="true"><span class="ar ex">▶</span><span class="ic">📂</span><span class="nm">技术文档</span><span class="ct">15</span></div>
-            <div class="dir-it" draggable="true"><span class="ic">📂</span><span class="nm">法务合规</span><span class="ct">5</span></div>
-            <div class="dir-it" draggable="true"><span class="ic">📂</span><span class="nm">产品手册</span><span class="ct">8</span></div>
-          </div>
-          <div class="dir-add" onclick="addFolder()">＋ 新建分类</div>
-        </div>
-      </div>
-      <div class="main-panel">
-        <div class="doc-toolbar">
-          <div class="search-s"><span class="ic">🔍</span><input placeholder="搜索文件名..." oninput="filterDocs(this.value)" /></div>
-          <button class="btn btn-outline btn-sm" onclick="showToast('上传文档')">📄 上传</button>
-          <button class="btn btn-outline btn-sm" onclick="batchDel()">🗑 删除</button>
-          <button class="btn btn-outline btn-sm" onclick="showToast('已提交重索引')">🔄 重索引</button>
-          <span class="spacer"></span><span style="font-size:12px;color:var(--text-muted)">共 48 篇</span>
-        </div>
-        <div class="doc-table-wrap">
-          <table class="doc-table"><thead><tr><th><input type="checkbox" onchange="toggleAll(this)" /></th><th>文件名</th><th>格式</th><th>大小</th><th>上传时间</th><th>分类</th><th>索引状态</th><th>向量进度</th><th>操作</th></tr></thead>
-            <tbody>
-              <tr><td><input type="checkbox" /></td><td>LangFlow_2024_年度财务报告</td><td><span class="doc-format">TXT</span></td><td>2.4 MB</td><td>2025-06-17</td><td>财务报告</td><td><span class="st-tag suc">已索引</span></td><td><span class="prog-bar"><span class="fill done" style="width:100%"></span></span> 12/12</td><td><button class="icon-btn" style="width:24px;height:24px;font-size:12px" onclick="previewDoc()">👁️</button></td></tr>
-              <tr><td><input type="checkbox" /></td><td>员工入职培训手册_2025</td><td><span class="doc-format">MD</span></td><td>1.1 MB</td><td>2025-06-15</td><td>人力资源</td><td><span class="st-tag suc">已索引</span></td><td><span class="prog-bar"><span class="fill done" style="width:100%"></span></span> 8/8</td><td><button class="icon-btn" style="width:24px;height:24px;font-size:12px" onclick="previewDoc()">👁️</button></td></tr>
-              <tr><td><input type="checkbox" /></td><td>RESTful_API_设计规范_v3.2</td><td><span class="doc-format">MD</span></td><td>3.6 MB</td><td>2025-06-14</td><td>技术文档</td><td><span class="st-tag pen">索引中</span></td><td><span class="prog-bar"><span class="fill ing" style="width:60%"></span></span> 9/15</td><td><button class="icon-btn" style="width:24px;height:24px;font-size:12px" onclick="previewDoc()">👁️</button></td></tr>
-              <tr><td><input type="checkbox" /></td><td>数据安全合规政策_2025Q2</td><td><span class="doc-format">TXT</span></td><td>0.8 MB</td><td>2025-06-12</td><td>法务合规</td><td><span class="st-tag suc">已索引</span></td><td><span class="prog-bar"><span class="fill done" style="width:100%"></span></span> 6/6</td><td><button class="icon-btn" style="width:24px;height:24px;font-size:12px" onclick="previewDoc()">👁️</button></td></tr>
-              <tr><td><input type="checkbox" /></td><td>AI Agent 开发指南</td><td><span class="doc-format">MD</span></td><td>5.2 MB</td><td>2025-06-10</td><td>技术文档</td><td><span class="st-tag suc">已索引</span></td><td><span class="prog-bar"><span class="fill done" style="width:100%"></span></span> 21/21</td><td><button class="icon-btn" style="width:24px;height:24px;font-size:12px" onclick="previewDoc()">👁️</button></td></tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="doc-pagination"><div class="info">1-5 / 48</div><div class="pg"><button disabled>‹</button><button class="act">1</button><button>2</button><button>…</button><button>10</button><button>›</button></div></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ── Agent Config Page ── -->
-  <div class="page" id="page-agent">
-    <div class="ag-wrap">
-      <div class="ag-hdr"><h1>⚙️ Agent 配置</h1><p>自定义 AI 问答助手的运行参数和行为风格</p></div>
-
-      <div class="ag-c">
-        <div class="ag-ch" onclick="toggleGrp(this)">
-          <span class="ct"><span class="ci">🆔</span> 基本设置</span>
-          <span class="ar up">▼</span>
-        </div>
-        <div class="ag-cb">
-          <div class="ag-f">
-            <div class="fl"><span class="l">Agent 名称</span><span class="h">对外展示的助手名称</span></div>
-            <input type="text" value="LangFlow 知识库助手" />
-          </div>
-          <div class="ag-f">
-            <div class="fl"><span class="l">专属提示词</span><span class="h">定义 AI 的角色与回答准则</span></div>
-            <textarea>你是一个专业的企业知识库问答助手。请基于提供的知识库内容准确回答，如果无法找到相关信息，请明确告知用户。回答时标注引用来源。</textarea>
-          </div>
-        </div>
-      </div>
-
-      <div class="ag-c">
-        <div class="ag-ch" onclick="toggleGrp(this)">
-          <span class="ct"><span class="ci">🔍</span> 检索参数</span>
-          <span class="ar up">▼</span>
-        </div>
-        <div class="ag-cb">
-          <div class="ag-f">
-            <div class="fl"><span class="l">相似度阈值</span><span class="h">低于此值的文档将被过滤</span></div>
-            <div class="sr"><input type="range" min="0" max="100" value="65" oninput="this.nextElementSibling.textContent=(this.value/100).toFixed(2)" /><span class="sv">0.65</span></div>
-          </div>
-          <div class="ag-f">
-            <div class="fl"><span class="l">最大检索数（Top-K）</span><span class="h">每次检索返回的片段数</span></div>
-            <div class="sr"><input type="range" min="1" max="20" value="5" oninput="this.nextElementSibling.textContent=this.value" /><span class="sv">5</span></div>
-          </div>
-          <div class="ag-f">
-            <div class="fl"><span class="l">上下文记忆长度</span><span class="h">AI 可参考的最近对话轮数</span></div>
-            <div class="sr"><input type="range" min="1" max="20" value="6" oninput="this.nextElementSibling.textContent=this.value+' 轮'" /><span class="sv">6 轮</span></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="ag-c">
-        <div class="ag-ch" onclick="toggleGrp(this)">
-          <span class="ct"><span class="ci">🎨</span> 回答风格</span>
-          <span class="ar up">▼</span>
-        </div>
-        <div class="ag-cb">
-          <div class="ag-f">
-            <div class="fl"><span class="l">风格偏好</span><span class="h">影响回答的语气与详略</span></div>
-            <div class="rg">
-              <span class="ro act" onclick="pickStyle(this)"><input type="radio" name="style" checked />严谨专业</span>
-              <span class="ro" onclick="pickStyle(this)"><input type="radio" name="style" />简洁精准</span>
-              <span class="ro" onclick="pickStyle(this)"><input type="radio" name="style" />通俗易懂</span>
-            </div>
-          </div>
-          <div class="ag-f">
-            <div class="fl"><span class="l">引用格式</span><span class="h">来源信息的展示方式</span></div>
-            <select><option>脚注 [1][2]</option><option>链接样式</option><option>文末汇总</option><option>不显示引用</option></select>
-          </div>
-        </div>
-      </div>
-
-      <div class="ag-c">
-        <div class="ag-ch" onclick="toggleGrp(this)">
-          <span class="ct"><span class="ci">📚</span> 知识库数据源</span>
-          <span class="ar up">▼</span>
-        </div>
-        <div class="ag-cb">
-          <div class="ag-f">
-            <div class="fl"><span class="l">启用知识库</span><span class="h">勾选 Agent 可检索的数据源</span></div>
-            <div class="ck">
-              <span class="co chk" onclick="toggleKB(this)"><input type="checkbox" checked />💳 财务报告</span>
-              <span class="co chk" onclick="toggleKB(this)"><input type="checkbox" checked />👥 人力资源</span>
-              <span class="co chk" onclick="toggleKB(this)"><input type="checkbox" checked />⚙️ 技术文档</span>
-              <span class="co" onclick="toggleKB(this)"><input type="checkbox" />📋 法务合规</span>
-              <span class="co" onclick="toggleKB(this)"><input type="checkbox" />📦 产品手册</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="ag-btns">
-        <button class="btn btn-primary" onclick="showToast('配置已保存')">💾 保存配置</button>
-        <button class="btn btn-outline" onclick="showToast('已重置为默认值')">↺ 重置</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ── Permissions Page ── -->
-<div class="page" id="page-perms">
-  <div class="perm-wrap">
-    <div class="pl">
-      <div class="pl-h"><h3>🔑 角色分组</h3><button class="icon-btn" style="width:24px;height:24px;font-size:13px" onclick="openRoleModal()">＋</button></div>
-      <div class="pl-l">
-        <div class="ri act"><span class="ic">👤</span><span class="nm">管理员</span><span class="ct">3</span></div>
-        <div class="ri"><span class="ic">👥</span><span class="nm">编辑者</span><span class="ct">8</span></div>
-        <div class="ri"><span class="ic">👁️</span><span class="nm">访客（只读）</span><span class="ct">12</span></div>
-        <div class="ri"><span class="ic">🔒</span><span class="nm">合规审计</span><span class="ct">2</span></div>
-        <div class="ri"><span class="ic">📦</span><span class="nm">产品团队</span><span class="ct">6</span></div>
-      </div>
-    </div>
-    <div class="pr">
-      <div class="pr-h"><h3>管理员 · 权限详情</h3><span class="hint">3 位成员</span></div>
-      <div class="pr-t">
-        <table><thead><tr><th>用户</th><th>部门</th><th>财务报告</th><th>人力资源</th><th>技术文档</th><th>法务合规</th><th>产品手册</th><th>操作</th></tr></thead>
-          <tbody>
-            <tr><td>张明</td><td>技术部</td><td><span class="perm-tag r">读写</span></td><td><span class="perm-tag x">检索</span></td><td><span class="perm-tag r">读写</span></td><td><span class="perm-tag w">只写</span></td><td><span class="perm-tag x">检索</span></td><td><button class="icon-btn" style="width:22px;height:22px;font-size:11px" onclick="openRoleModal()">✎</button></td></tr>
-            <tr><td>李华</td><td>财务部</td><td><span class="perm-tag r">读写</span></td><td><span class="perm-tag x">检索</span></td><td><span class="perm-tag" style="color:#bbb">—</span></td><td><span class="perm-tag x">检索</span></td><td><span class="perm-tag" style="color:#bbb">—</span></td><td><button class="icon-btn" style="width:22px;height:22px;font-size:11px" onclick="openRoleModal()">✎</button></td></tr>
-            <tr><td>王磊</td><td>运维部</td><td><span class="perm-tag x">检索</span></td><td><span class="perm-tag x">检索</span></td><td><span class="perm-tag r">读写</span></td><td><span class="perm-tag" style="color:#bbb">—</span></td><td><span class="perm-tag x">检索</span></td><td><button class="icon-btn" style="width:22px;height:22px;font-size:11px" onclick="openRoleModal()">✎</button></td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ── Role Management Page ── -->
-<div class="page" id="page-roles">
-  <div class="role-wrap">
-    <div class="role-hdr">
-      <div class="role-hdr-l"><h1>👤 角色管理</h1><p>配置系统角色，分配知识库操作权限</p></div>
-      <div class="role-hdr-r">
-        <button class="btn btn-primary" onclick="openNewRole()">＋ 新建角色</button>
-        <button class="btn btn-outline" onclick="showToast('批量删除')">🗑 批量删除</button>
-        <button class="btn btn-outline" onclick="showToast('已导出')">⬇ 导出</button>
-      </div>
-    </div>
-
-    <div class="role-toolbar">
-      <div class="rs"><span class="ic">🔍</span><input placeholder="搜索角色名称..." oninput="filterRoles(this.value)" /></div>
-      <select class="rf" onchange="showToast('筛选')" style="padding:5px 8px;border:1px solid var(--border);border-radius:4px;font-size:12px;font-family:var(--font);color:var(--text-secondary);background:var(--surface)">
-        <option>全部权限分组</option><option>管理员</option><option>编辑者</option><option>访客</option>
+    <div class="hdr-c">
+      <select id="kbSelect" onchange="curKb=this.value">
+        <option value="">全部知识库</option>
       </select>
-        <button class="btn btn-outline" style="font-size:12px;padding:5px 12px" onclick="showToast('已重置')">↺ 重置</button>
-      <span class="sp"></span>
-      <span style="font-size:12px;color:var(--text-muted)">共 6 个角色</span>
     </div>
+    <div class="hdr-r" id="authArea"></div>
+  </div>
 
-    <div class="role-card">
-      <table>
-        <thead><tr><th>角色名称</th><th>关联权限分组</th><th>知识库权限范围</th><th>创建人</th><th>创建时间</th><th>操作</th></tr></thead>
-        <tbody>
-          <tr><td>超级管理员</td><td><span class="perm-tg r">管理员</span></td><td><span class="perm-tg r">读写</span> 财务 · <span class="perm-tg r">读写</span> 人力 · <span class="perm-tg r">读写</span> 技术</td><td>系统</td><td>2025-01-01</td><td><span class="act-btns"><button title="编辑" onclick="openNewRole()">✎</button><button title="删除" onclick="showToast('已删除')">✕</button><button title="复制" onclick="showToast('已复制角色')">⧉</button></span></td></tr>
-          <tr><td>编辑者</td><td><span class="perm-tg r">编辑者</span></td><td><span class="perm-tg r">读写</span> 财务 · <span class="perm-tg x">检索</span> 人力 · <span class="perm-tg r">读写</span> 技术</td><td>张明</td><td>2025-02-15</td><td><span class="act-btns"><button title="编辑" onclick="openNewRole()">✎</button><button title="删除" onclick="showToast('已删除')">✕</button><button title="复制" onclick="showToast('已复制角色')">⧉</button></span></td></tr>
-          <tr><td>访客（只读）</td><td><span class="perm-tg v">访客</span></td><td><span class="perm-tg x">检索</span> 财务 · <span class="perm-tg x">检索</span> 技术 · <span class="perm-tg v">只读</span> 产品</td><td>李华</td><td>2025-03-01</td><td><span class="act-btns"><button title="编辑" onclick="openNewRole()">✎</button><button title="删除" onclick="showToast('已删除')">✕</button><button title="复制" onclick="showToast('已复制角色')">⧉</button></span></td></tr>
-          <tr><td>合规审计</td><td><span class="perm-tg v">审计</span></td><td><span class="perm-tg x">检索</span> 财务 · <span class="perm-tg v">只读</span> 法务 · <span class="perm-tg x">检索</span> 合规</td><td>系统</td><td>2025-03-20</td><td><span class="act-btns"><button title="编辑" onclick="openNewRole()">✎</button><button title="删除" onclick="showToast('已删除')">✕</button><button title="复制" onclick="showToast('已复制角色')">⧉</button></span></td></tr>
-          <tr><td>产品团队</td><td><span class="perm-tg r">编辑者</span></td><td><span class="perm-tg r">读写</span> 产品 · <span class="perm-tg r">读写</span> 技术 · <span class="perm-tg x">检索</span> 财务</td><td>王磊</td><td>2025-04-10</td><td><span class="act-btns"><button title="编辑" onclick="openNewRole()">✎</button><button title="删除" onclick="showToast('已删除')">✕</button><button title="复制" onclick="showToast('已复制角色')">⧉</button></span></td></tr>
-          <tr><td>外部顾问</td><td><span class="perm-tg v">访客</span></td><td><span class="perm-tg x">检索</span> 技术 · <span class="perm-tg v">只读</span> 产品</td><td>李华</td><td>2025-05-06</td><td><span class="act-btns"><button title="编辑" onclick="openNewRole()">✎</button><button title="删除" onclick="showToast('已删除')">✕</button><button title="复制" onclick="showToast('已复制角色')">⧉</button></span></td></tr>
-        </tbody>
-      </table>
-      <div class="role-pagi"><div class="info">1-6 / 6</div><div class="pg"><button class="act">1</button></div></div>
+  <!-- Chat -->
+  <div class="chat">
+    <div class="msgs" id="msgList"></div>
+    <div class="inp">
+      <textarea id="chatInput" rows="1" placeholder="输入您的问题..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();send()}"></textarea>
+      <button class="send" id="sendBtn" onclick="send()" disabled>📤</button>
     </div>
   </div>
 </div>
 
-<!-- ── Archived Page ── -->
-<div class="page" id="page-archived">
-  <div class="arch-wrap">
-    <div class="arch-hdr">
-      <div class="arch-hdr-l"><h1>🗂️ 已归档</h1><p>已归档知识库、停用 Agent、作废角色分组，支持恢复或永久删除</p></div>
-      <div class="arch-hdr-r">
-        <button class="btn btn-primary" onclick="showToast('已恢复选中项')">↩ 批量恢复</button>
-        <button class="btn btn-outline" onclick="showToast('已彻底删除')">🗑 批量彻底删除</button>
-      </div>
-    </div>
-
-    <div class="arch-toolbar">
-      <div class="as"><span class="ic">🔍</span><input placeholder="搜索归档名称..." oninput="filterArch(this.value)" /></div>
-      <span class="af"><select><option>全部归档类型</option><option>知识库</option><option>Agent</option><option>权限分组</option></select></span>
-      <span class="af"><select><option>全部时间</option><option>最近7天</option><option>最近30天</option><option>最近90天</option></select></span>
-      <button class="btn btn-ghost" style="font-size:12px" onclick="showToast('已重置筛选')">↺ 重置</button>
-      <span class="sp"></span>
-      <span style="font-size:12px;color:var(--text-muted)">共 5 条归档</span>
-    </div>
-
-    <div class="arch-card">
-      <table>
-        <thead><tr><th>归档名称</th><th>归档类型</th><th>原归属分组</th><th>归档时间</th><th>操作人</th><th>保留期限</th><th>操作</th></tr></thead>
-        <tbody>
-          <tr><td>2023 年度财务报告</td><td><span class="arch-type kb">知识库</span></td><td>财务报告</td><td>2025-06-01</td><td>张明</td><td>2026-06-01</td><td><span class="act-btns"><button title="查看详情" onclick="showToast('查看详情')">👁️</button><button title="恢复" onclick="showToast('已恢复')">↩</button><button title="永久删除" onclick="showToast('已永久删除')">✕</button></span></td></tr>
-          <tr><td>2024 Q3 产品路线图</td><td><span class="arch-type kb">知识库</span></td><td>产品手册</td><td>2025-05-20</td><td>李华</td><td>2025-12-31</td><td><span class="act-btns"><button title="查看详情" onclick="showToast('查看详情')">👁️</button><button title="恢复" onclick="showToast('已恢复')">↩</button><button title="永久删除" onclick="showToast('已永久删除')">✕</button></span></td></tr>
-          <tr><td>客服问答 Agent（停用）</td><td><span class="arch-type ag">Agent</span></td><td>未分组</td><td>2025-05-15</td><td>王磊</td><td>永久</td><td><span class="act-btns"><button title="查看详情" onclick="showToast('查看详情')">👁️</button><button title="恢复" onclick="showToast('已恢复')">↩</button><button title="永久删除" onclick="showToast('已永久删除')">✕</button></span></td></tr>
-          <tr><td>实习生权限分组</td><td><span class="arch-type rl">权限分组</span></td><td>角色管理</td><td>2025-04-28</td><td>系统</td><td>2025-10-28</td><td><span class="act-btns"><button title="查看详情" onclick="showToast('查看详情')">👁️</button><button title="恢复" onclick="showToast('已恢复')">↩</button><button title="永久删除" onclick="showToast('已永久删除')">✕</button></span></td></tr>
-          <tr><td>旧版 API 技术文档</td><td><span class="arch-type kb">知识库</span></td><td>技术文档</td><td>2025-04-10</td><td>张明</td><td>永久</td><td><span class="act-btns"><button title="查看详情" onclick="showToast('查看详情')">👁️</button><button title="恢复" onclick="showToast('已恢复')">↩</button><button title="永久删除" onclick="showToast('已永久删除')">✕</button></span></td></tr>
-        </tbody>
-      </table>
-      <div class="arch-pagi"><div class="info">1-5 / 5</div><div class="pg"><button class="act">1</button></div></div>
-    </div>
+<!-- Citation Modal -->
+<div class="cit-m" id="citModal" onclick="if(event.target===this)closeModal('citModal')">
+  <div class="cit-b">
+    <div class="cit-h"><h3>📖 引用来源</h3><button class="icon-btn" onclick="closeModal('citModal')">✕</button></div>
+    <div class="cit-bd" id="citList"><!-- 动态渲染 --></div>
   </div>
 </div>
 
-<!-- New Role Modal -->
-<div class="perm-m" id="newRoleModal" onclick="if(event.target===this)closeNewRole()">
-  <div class="perm-b">
-    <div class="perm-h"><h3>＋ 新建角色</h3><button class="icon-btn" onclick="closeNewRole()">✕</button></div>
-    <div class="perm-bd">
-      <div class="pf">
-        <div class="fl"><span class="l">角色名称</span></div>
-        <input type="text" placeholder="输入角色名称" value="" />
-      </div>
-      <div class="pf">
-        <div class="fl"><span class="l">绑定权限分组</span></div>
-        <div class="perm-cks">
-          <span class="co chk" onclick="this.classList.toggle('chk')"><input type="checkbox" checked hidden />管理员</span>
-          <span class="co" onclick="this.classList.toggle('chk')"><input type="checkbox" hidden />编辑者</span>
-          <span class="co" onclick="this.classList.toggle('chk')"><input type="checkbox" hidden />访客</span>
-          <span class="co" onclick="this.classList.toggle('chk')"><input type="checkbox" hidden />审计</span>
-        </div>
-      </div>
-      <div class="pt">📚 知识库权限配置</div>
-      <div class="pg">
-        <div class="po chk"><span class="cb">✓</span><span class="kn">💳 财务报告</span><div class="kp"><span class="kt">读取</span><span class="kt">写入</span><span class="kt">检索</span></div></div>
-        <div class="po chk"><span class="cb">✓</span><span class="kn">👥 人力资源</span><div class="kp"><span class="kt">读取</span><span class="kt">检索</span></div></div>
-        <div class="po"><span class="cb">✓</span><span class="kn">⚙️ 技术文档</span><div class="kp"><span class="kt">读取</span><span class="kt">写入</span><span class="kt">检索</span></div></div>
-        <div class="po chk"><span class="cb">✓</span><span class="kn">📋 法务合规</span><div class="kp"><span class="kt">读取</span><span class="kt">检索</span></div></div>
-        <div class="po"><span class="cb">✓</span><span class="kn">📦 产品手册</span><div class="kp"><span class="kt">读取</span><span class="kt">检索</span></div></div>
-      </div>
-    </div>
-    <div class="perm-f"><button class="btn btn-outline" onclick="closeNewRole()">取消</button><button class="btn btn-primary" onclick="closeNewRole();showToast('角色已创建')">确认创建</button></div>
-  </div>
-</div>
-
-<!-- Role Modal -->
-<div class="perm-m" id="roleModal" onclick="if(event.target===this)closeRoleModal()">
-  <div class="perm-b">
-    <div class="perm-h"><h3>✎ 编辑角色权限</h3><button class="icon-btn" onclick="closeRoleModal()">✕</button></div>
-    <div class="perm-bd">
-      <div class="pf"><div class="fl"><span class="l">角色名称</span></div><input type="text" value="管理员" /></div>
-      <div class="pt">📚 知识库权限分配</div>
-      <div class="pg">
-        <div class="po chk"><span class="cb">✓</span><span class="kn">💳 财务报告</span><div class="kp"><span class="kt">读取</span><span class="kt">写入</span><span class="kt">检索</span></div></div>
-        <div class="po chk"><span class="cb">✓</span><span class="kn">👥 人力资源</span><div class="kp"><span class="kt">读取</span><span class="kt">检索</span></div></div>
-        <div class="po chk"><span class="cb">✓</span><span class="kn">⚙️ 技术文档</span><span class="kp"><span class="kt">读取</span><span class="kt">写入</span><span class="kt">检索</span></div></div>
-        <div class="po"><span class="cb">✓</span><span class="kn">📋 法务合规</span><div class="kp"><span class="kt">读取</span><span class="kt">检索</span></div></div>
-        <div class="po chk"><span class="cb">✓</span><span class="kn">📦 产品手册</span><div class="kp"><span class="kt">读取</span><span class="kt">检索</span></div></div>
-      </div>
-    </div>
-    <div class="perm-f"><button class="btn btn-outline" onclick="closeRoleModal()">取消</button><button class="btn btn-primary" onclick="closeRoleModal();showToast('权限配置已保存')">保存</button></div>
-  </div>
-</div>
-
-<!-- Source Trace Modal -->
-<div class="src-m" id="srcM" onclick="if(event.target===this)closeSrc()">
-  <div class="src-b">
-    <div class="src-h"><h3>📖 引用来源 · 2 篇文档</h3><button class="icon-btn" onclick="closeSrc()">✕</button></div>
-    <div class="src-bd">
-      <div class="si" onclick="showToast('跳转至原文')"><div class="sih">📄 LangFlow_2024_年度财务报告.txt <span style="font-weight:400;color:var(--text-muted)">· 片段 #7</span></div><div class="sit">2024 年公司实现营业收入 12.8 亿元，同比增长 67%。其中：企业级 AI 平台授权收入 8.5 亿元，AI 咨询与定制服务收入 2.8 亿元，云平台订阅收入 1.5 亿元。</div><div class="sim"><span>🔗 相似度 0.91</span><span>📏 486 字符</span></div></div>
-      <div class="si" onclick="showToast('跳转至原文')"><div class="sih">📄 LangFlow_2024_年度财务报告.txt <span style="font-weight:400;color:var(--text-muted)">· 片段 #8</span></div><div class="sit">净利润达到 2.1 亿元，较 2023 年增长 89%。2024 年研发投入 4.2 亿元，占营收比重 32.8%。</div><div class="sim"><span>🔗 相似度 0.87</span><span>📏 312 字符</span></div></div>
-    </div>
-    <div class="src-f"><button class="btn btn-outline" onclick="closeSrc()">关闭</button><button class="btn btn-primary" onclick="closeSrc();showToast('已跳转至知识库原文')">查看完整文档 →</button></div>
-  </div>
-</div>
-
-<!-- Preview Modal -->
-<div class="preview-modal" id="previewModal" onclick="if(event.target===this)closePreview()">
-  <div class="preview-box">
-    <div class="preview-hdr"><div class="info"><span class="name">LangFlow_2024_年度财务报告.txt</span><span class="st-tag suc">已索引</span></div><button class="icon-btn" onclick="closePreview()">✕</button></div>
-    <div class="preview-body">
-      <div class="preview-meta"><span>📄 TXT</span><span>2.4 MB</span><span>📅 2025-06-17</span><span>🔗 12 个片段</span><span>📂 财务报告</span></div>
-      <div class="preview-content">LangFlow 科技公司 2024 年度运营报告
-
-一、公司概况
-LangFlow 科技成立于 2020 年，总部位于中国深圳，专注于人工智能基础软件研发。
-截至 2024 年底，公司员工总数达到 1200 人，其中研发人员占比 75%。
-
-二、财务表现
-2024 年公司实现营业收入 12.8 亿元，同比增长 67%。
-净利润达到 2.1 亿元，较 2023 年增长 89%。</div>
-      <div class="preview-chunks"><h4>🔗 分段索引 (12 段)</h4>
-        <div class="chunk-list">
-          <span class="chunk-tag act">#1 公司概况</span><span class="chunk-tag">#2 财务表现·营收</span><span class="chunk-tag">#3 财务表现·利润</span>
-          <span class="chunk-tag">#4 研发投入</span><span class="chunk-tag">#5 产品发布·3.0</span><span class="chunk-tag">#6 客户·金融</span>
-        </div>
-      </div>
-    </div>
-    <div class="preview-footer"><button class="btn btn-outline" onclick="closePreview()">关闭</button><button class="btn btn-primary btn-sm" onclick="showToast('已导出')">⬇ 导出</button></div>
-  </div>
-</div>
-
-</div>
-</div>
-
+<!-- Toast -->
 <div class="toast" id="toast"></div>
 
 <script>
-let dark=false,sid=true,sessionId='web-'+Date.now();
-function toggleSide(){sid=!sid;document.getElementById('side').classList.toggle('hide')}
-function toggleDark(){dark=!dark;document.body.classList.toggle('dark');document.getElementById('themeBtn').textContent=dark?'☀️':'🌙'}
-function showToast(m){
-  const t=document.getElementById('toast');
-  t.textContent=m;t.style.opacity='1';t.style.transform='translateX(-50%) translateY(0)';
-  clearTimeout(t._h);t._h=setTimeout(()=>{t.style.opacity='0';t.style.transform='translateX(-50%) translateY(80px)'},2400)
+// ── Auth Check ──
+(function(){
+  const t=localStorage.getItem('token');
+  if(!t){window.location.href='/login';}
+})();
+
+// ── State ──
+let token=localStorage.getItem('token')||'';
+let username=localStorage.getItem('username')||'';
+let role=localStorage.getItem('role')||'user';
+let curKb='';
+let thinking=false;
+
+// ── Init ──
+loadKbOptions();
+updateAuthUI();
+
+async function loadKbOptions(){
+  try{
+    const r=await fetch('/api/categories');
+    const d=await r.json();
+    const sel=document.getElementById('kbSelect');
+    sel.innerHTML='<option value="">全部知识库</option>'+ (d.categories||[]).map(c=>`<option value="${c}">${c}</option>`).join('');
+    sel.value=curKb;
+  }catch(e){}
 }
 
-// ── Page Nav ──
-document.querySelectorAll('.nav-it[data-page]').forEach(el=>{
-  el.addEventListener('click',()=>{
-    document.querySelectorAll('.nav-it').forEach(n=>n.classList.remove('act'));
-    el.classList.add('act');
-    document.querySelectorAll('.page').forEach(p=>p.classList.remove('act'));
-    document.getElementById('page-'+el.dataset.page).classList.add('act');
-  })
-})
+// ── Auth UI ──
+function updateAuthUI(){
+  const area=document.getElementById('authArea');
+  const adminLink=role==='admin'?'<a href="/admin/" target="_blank" style="font-size:12px;color:var(--primary);margin-left:4px;text-decoration:none">⚙️ 管理</a>':'';
+  area.innerHTML=`
+    <span class="user-badge"><span class="av">${username[0].toUpperCase()}</span>${username}</span>
+    ${adminLink}
+    <button class="btn btn-ghost btn-sm" onclick="logout()">退出</button>
+  `;
+}
+function logout(){
+  localStorage.removeItem('token');localStorage.removeItem('username');localStorage.removeItem('role');
+  window.location.href='/login';
+}
+function showToast(m,t){
+  const el=document.getElementById('toast');
+  el.textContent=m;el.style.opacity='1';el.style.background=t==='error'?'var(--error)':'var(--primary)';
+  clearTimeout(el._t);el._t=setTimeout(()=>el.style.opacity='0',2500);
+}
 
-// ── KB Selection ──
-document.querySelectorAll('.kbo').forEach(el=>{
-  el.addEventListener('click',()=>{
-    el.classList.toggle('chk');
-    const n=document.querySelectorAll('.kbo.chk').length;
-    document.querySelector('.kb-btm span:first-child').textContent='已选 '+n+' 个知识库';
-  })
-})
 
 // ── Chat ──
-let thinking=false,msgs=[];
-function ckey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();csend()}}
-async function csend(){
-  const i=document.getElementById('ci'),b=document.getElementById('csb'),t=i.value.trim(),c=document.getElementById('cms'),p=document.getElementById('cph');
-  if(!t||thinking)return;
-  i.value='';b.disabled=true;thinking=true;
-  if(p)p.style.display='none';
-  const me=document.createElement('div');me.className='cmsg me';me.textContent=t;
-  const ts=document.createElement('div');ts.className='ts';ts.textContent=new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'});
-  me.appendChild(ts);c.appendChild(me);c.scrollTop=c.scrollHeight;
-  const bot=document.createElement('div');bot.className='cmsg bot';
-  const td=document.createElement('div');td.className='tds';
-  for(let i=0;i<3;i++){const s=document.createElement('span');td.appendChild(s)}
-  bot.appendChild(td);c.appendChild(bot);c.scrollTop=c.scrollHeight;
+async function send(){
+  const input=document.getElementById('chatInput');
+  const btn=document.getElementById('sendBtn');
+  const text=input.value.trim();
+  if(!text||thinking||!token)return;
+  if(!token){showToast('请先登录','error');return}
+  thinking=true;btn.disabled=true;
+  input.value='';input.style.height='auto';
+
+  // User message
+  const list=document.getElementById('msgList');
+  const me=document.createElement('div');me.className='msg me';
+  me.innerHTML=`<div class="av">${username[0].toUpperCase()}</div><div class="b">${escHtml(text)}<div class="ts">${now()}</div></div>`;
+  list.appendChild(me);list.scrollTop=list.scrollHeight;
+
+  // Thinking
+  const bot=document.createElement('div');bot.className='msg bot';
+  bot.innerHTML=`<div class="av">🧠</div><div class="b"><div class="tds"><span></span><span></span><span></span></div></div>`;
+  list.appendChild(bot);list.scrollTop=list.scrollHeight;
+
   try{
-    const r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:t,session_id:sessionId})});
-    const d=await r.json();bot.textContent='';bot.textContent=d.reply;
-    const ct=document.createElement('div');ct.className='ts';
-    const cits=document.createElement('span');cits.innerHTML=' · <span class="cit" onclick="event.stopPropagation();showSrcModal()">📖 2 篇引用</span>';
-    ct.appendChild(document.createTextNode(new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})));
-    ct.appendChild(cits);bot.appendChild(ct);
-  }catch(e){bot.textContent='请求失败，请检查服务'}
-  b.disabled=false;thinking=false;i.focus();c.scrollTop=c.scrollHeight
-}
-function clearChat(){
-  document.getElementById('cms').querySelectorAll('.cmsg:not(.ph)').forEach(e=>e.remove());
-  document.getElementById('cph').style.display='flex';
-  showToast('对话已清空')
-}
-function resetMemory(){
-  sessionId='web-'+Date.now();
-  clearChat();
-  showToast('Agent 记忆已重置')
+    const r=await fetch('/api/chat',{
+      method:'POST',headers:{'Content-Type':'application/json',...(token?{Authorization:'Bearer '+token}:{})},
+      body:JSON.stringify({message:text,session_id:'web-'+Date.now()})
+    });
+    if(!r.ok){const d=await r.json();throw new Error(d.detail||'请求失败')}
+    const d=await r.json();
+    bot.innerHTML=`<div class="av">🧠</div><div class="b">${escHtml(d.reply)}<div class="ts">${now()} · <span class="cit" onclick="showCitation()">📖 查看来源</span></div></div>`;
+    list.scrollTop=list.scrollHeight;
+    // Store citations for modal
+    window._lastCitations=d.sources||[];
+  }catch(e){bot.innerHTML=`<div class="av">🧠</div><div class="b">请求失败：${escHtml(e.message)}<div class="ts">${now()}</div></div>`}
+  thinking=false;btn.disabled=false;input.focus();list.scrollTop=list.scrollHeight;
 }
 
-// ── Source Modal ──
-function showSrcModal(){document.getElementById('srcM').classList.add('show')}
-function closeSrc(){document.getElementById('srcM').classList.remove('show')}
+function showCitation(){
+  const items=window._lastCitations||[];
+  const list=document.getElementById('citList');
+  if(!items.length){list.innerHTML='<div style="color:var(--text-muted);text-align:center;padding:20px">暂无引用来源</div>'}
+  else{list.innerHTML=items.map((s,i)=>`<div class="cit-it"><span class="idx">#${i+1}</span>${escHtml(s||'')}</div>`).join('')}
+  document.getElementById('citModal').classList.add('show');
+}
 
-// ── Doc Management ──
-function addFolder(){const n=prompt('分类名称：');if(n)showToast('已创建：'+n)}
-function filterDocs(q){document.querySelectorAll('#docTable tbody tr').forEach(r=>{r.style.display=r.textContent.includes(q)?'':'none'})}
-function toggleAll(cb){document.querySelectorAll('.doc-table tbody input[type=checkbox]').forEach(c=>c.checked=cb.checked)}
-function batchDel(){const n=document.querySelectorAll('.doc-table tbody input:checked').length;if(n)showToast('删除 '+n+' 篇');else showToast('请先选择')}
-function previewDoc(){document.getElementById('previewModal').classList.add('show')}
-function closePreview(){document.getElementById('previewModal').classList.remove('show')}
-document.querySelectorAll('.dir-it[draggable]').forEach(el=>{
-  el.addEventListener('dragstart',()=>el.style.opacity='.4');
-  el.addEventListener('dragend',()=>el.style.opacity='1');
-  el.addEventListener('dragover',e=>{e.preventDefault();el.style.background='var(--primary-light)'});
-  el.addEventListener('dragleave',()=>el.style.background='');
-  el.addEventListener('drop',function(){el.style.background='';showToast('已移动')});
-});
-document.addEventListener('click',function(e){if(e.target.closest('.chunk-tag')){document.querySelectorAll('.chunk-tag').forEach(t=>t.classList.remove('act'));e.target.closest('.chunk-tag').classList.add('act')}});
+function escHtml(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML}
+function now(){const d=new Date();return d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0')}
 
-// ── Agent Config ──
-function toggleGrp(el){const b=el.nextElementSibling,a=el.querySelector('.ar');b.classList.toggle('hide');a.classList.toggle('up')}
-function pickStyle(el){el.parentElement.querySelectorAll('.ro').forEach(r=>r.classList.remove('act'));el.classList.add('act')}
-function toggleKB(el){el.classList.toggle('chk')}
-
-// ── Role Management ──
-function openNewRole(){document.getElementById('newRoleModal').classList.add('show')}
-function closeNewRole(){document.getElementById('newRoleModal').classList.remove('show')}
-function filterRoles(q){document.querySelectorAll('.role-card tbody tr').forEach(r=>{r.style.display=r.textContent.includes(q)?'':'none'})}
-function filterArch(q){document.querySelectorAll('.arch-card tbody tr').forEach(r=>{r.style.display=r.textContent.includes(q)?'':'none'})}
-
-// ── Permissions ──
-function openRoleModal(){document.getElementById('roleModal').classList.add('show')}
-function closeRoleModal(){document.getElementById('roleModal').classList.remove('show')}
-document.querySelectorAll('.perm-wrap .ri').forEach(el=>{
-  el.addEventListener('click',()=>{
-    document.querySelectorAll('.perm-wrap .ri').forEach(r=>r.classList.remove('act'));
-    el.classList.add('act');
-  })
-});
-document.querySelectorAll('.po').forEach(el=>{
-  el.addEventListener('click',()=>{el.classList.toggle('chk')});
+// Auto-resize textarea
+document.getElementById('chatInput').addEventListener('input',function(){
+  this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px';
 });
 </script>
 </body>

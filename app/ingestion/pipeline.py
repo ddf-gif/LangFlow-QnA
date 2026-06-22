@@ -39,7 +39,7 @@ def load_documents(docs_dir: str | Path) -> List[Document]:
 
     loader = DirectoryLoader(
         str(docs_dir),
-        glob="**/*.txt",       # 加载所有 .txt 文件
+        glob="**/*.[tTmMpPjJcC]*",   # 加载 txt/md/py/js/ts/json/csv 等
         loader_cls=TextLoader,
         loader_kwargs={"encoding": "utf-8"},
         show_progress=True,

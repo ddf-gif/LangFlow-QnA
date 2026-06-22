@@ -24,6 +24,15 @@ class Settings(BaseSettings):
     retrieval_top_k: int = 5
     retrieval_score_threshold: float = 0.3
 
+    # JWT 认证
+    jwt_secret: str = "langflow-jwt-secret-change-me"
+    jwt_algorithm: str = "HS256"
+    jwt_expire_minutes: int = 1440  # 24 小时
+
+    # 管理员账号（固定账号）
+    admin_username: str = "admin"
+    admin_password: str = "admin123"
+
     # 应用
     log_level: str = "INFO"
 
