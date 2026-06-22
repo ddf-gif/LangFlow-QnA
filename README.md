@@ -100,19 +100,23 @@ cp .env.example .env
 
 ```bash
 # 启动 Web 服务（推荐使用离线模式避免 SSL 问题）
-set HF_HUB_OFFLINE=1 && uvicorn app.main:app --host 127.0.0.1 --port 8765
+set HF_HUB_OFFLINE=1 && uvicorn app.main:app --reload --port 8765
 ```
 
-打开 **http://127.0.0.1:8765/login** 访问登录页面。
+服务启动后，打开浏览器访问 `http://localhost:8765/login` 即可进入登录页面。
+
+默认端口为 `8765`，可在启动命令中通过 `--port` 参数修改。
 
 ### 访问地址
 
-| 页面 | URL | 说明 |
-|------|-----|------|
-| 🔐 登录/注册 | `http://127.0.0.1:8765/login` | 注册或登录 |
-| 🧠 C 端问答 | `http://127.0.0.1:8765/` | 用户问答界面（需登录） |
-| ⚙️ B 端管理 | `http://127.0.0.1:8765/admin/` | 管理后台（需管理员登录） |
-| 📖 API 文档 | `http://127.0.0.1:8765/docs` | Swagger 文档 |
+| 页面 | 路径 | 说明 |
+|------|------|------|
+| 🔐 登录/注册 | `/login` | 注册或登录 |
+| 🧠 C 端问答 | `/` | 用户问答界面（需登录） |
+| ⚙️ B 端管理 | `/admin/` | 管理后台（需管理员登录） |
+| 📖 API 文档 | `/docs` | Swagger 文档 |
+
+> 以上路径均相对于服务部署地址，例如部署在 `http://localhost:8765` 则对应 `http://localhost:8765/login`。
 
 ### 默认管理员账号
 
@@ -126,7 +130,7 @@ set HF_HUB_OFFLINE=1 && uvicorn app.main:app --host 127.0.0.1 --port 8765
 
 ```bash
 # 方式一：通过管理后台网页上传
-# 访问 http://127.0.0.1:8765/admin/ → 文档管理 → 上传
+# 访问部署地址的 /admin/ → 文档管理 → 上传
 
 # 方式二：命令行导入
 python scripts/ingest_docs.py
@@ -198,7 +202,7 @@ LangFlow-QnA/
 
 ## API 文档
 
-启动服务后访问 **http://127.0.0.1:8765/docs** 查看 Swagger 文档。
+启动服务后访问 `/docs` 查看完整的 Swagger 文档（例如部署在 `http://localhost:8765` 则访问 `http://localhost:8765/docs`）。
 
 | 接口 | 方法 | 说明 |
 |------|------|------|
@@ -230,26 +234,28 @@ LangFlow-QnA/
 
 ```bash
 # 注册
-curl -X POST http://127.0.0.1:8765/api/auth/register \
+curl -X POST https://your-domain.com/api/auth/register \
   -H "Content-Type: application/json" \
   -d '{"username": "myuser", "password": "mypass123"}'
 
 # 登录
-curl -X POST http://127.0.0.1:8765/api/auth/login \
+curl -X POST https://your-domain.com/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{"username": "admin", "password": "admin123"}'
 
 # 问答（需传入 token）
 TOKEN="your-jwt-token"
-curl -X POST http://127.0.0.1:8765/api/chat \
+curl -X POST https://your-domain.com/api/chat \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer $TOKEN" \
   -d '{"message": "2024年营收多少", "session_id": "test-1"}'
 
 # 上传文档
-curl -X POST http://127.0.0.1:8765/api/documents/upload \
+curl -X POST https://your-domain.com/api/documents/upload \
   -F "file=@report.txt"
 ```
+
+> 将 `your-domain.com` 替换为实际部署地址，本地开发可用 `localhost:8765`。
 
 ---
 
