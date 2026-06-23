@@ -1,37 +1,22 @@
 [
-  {
-    "id": "revenue-2024",
-    "question": "LangFlow 2024年营收多少",
-    "expected_keywords": ["12.8亿", "12.8"],
-    "relevant_docs": ["langflow_annual_report_2024.txt"],
-    "category": "财务"
-  },
-  {
-    "id": "profit-2024",
-    "question": "LangFlow 2024年净利润多少",
-    "expected_keywords": ["2.1亿", "2.1"],
-    "relevant_docs": ["langflow_annual_report_2024.txt"],
-    "category": "财务"
-  },
-  {
-    "id": "employees",
-    "question": "LangFlow 公司有多少员工",
-    "expected_keywords": ["1200"],
-    "relevant_docs": ["langflow_annual_report_2024.txt"],
-    "category": "财务"
-  },
-  {
-    "id": "founded",
-    "question": "LangFlow 公司成立于哪一年",
-    "expected_keywords": ["2020"],
-    "relevant_docs": ["langflow_annual_report_2024.txt"],
-    "category": "财务"
-  },
-  {
-    "id": "ai-tech-stack",
-    "question": "企微AI机器人有哪些核心技术",
-    "expected_keywords": ["LangChain", "Python", "FastAPI"],
-    "relevant_docs": ["企微AI机器人-开发路线图.md"],
-    "category": "技术"
-  }
+  {"id":"tech-stack","question":"企微AI机器人用了哪些技术栈","expected_keywords":["Python","FastAPI","LangChain","ChromaDB"],"relevant_docs":["企微AI机器人-开发路线图.md"],"category":"技术","difficulty":"easy"},
+  {"id":"webhook-req","question":"企业微信的Webhook回调地址需要满足什么条件","expected_keywords":["公网","IP"],"relevant_docs":["企微AI机器人-开发路线图.md"],"category":"技术","difficulty":"easy"},
+  {"id":"msg-format","question":"企业微信回调消息是什么格式","expected_keywords":["XML"],"relevant_docs":["企微AI机器人-开发路线图.md"],"category":"技术","difficulty":"easy"},
+  {"id":"database-used","question":"这个机器人项目用了哪些数据库","expected_keywords":["ChromaDB","Redis"],"relevant_docs":["企微AI机器人-开发路线图.md"],"category":"技术","difficulty":"medium"},
+  {"id":"conversation-memory","question":"多轮对话记忆是怎么实现的","expected_keywords":["Redis","TTL","30"],"relevant_docs":["企微AI机器人-开发路线图.md"],"category":"技术","difficulty":"medium"},
+  {"id":"server-spec","question":"部署这个机器人需要什么云服务器配置","expected_keywords":["1核","2G","68"],"relevant_docs":["企微AI机器人-开发路线图.md"],"category":"技术","difficulty":"medium"},
+  {"id":"ngrok-purpose","question":"开发企微机器人时ngrok是用来做什么的","expected_keywords":["公网","穿透"],"relevant_docs":["企微AI机器人-开发路线图.md"],"category":"技术","difficulty":"medium"},
+  {"id":"chunk-size-reason","question":"为什么切片大小选择500","expected_keywords":["500","准确率","召回率"],"relevant_docs":["企微AI机器人-开发路线图.md"],"category":"技术","difficulty":"hard"},
+  {"id":"two-week-priority","question":"如果只有两周时间开发这个机器人最优先做什么","expected_keywords":["P0","LLM","RAG","企微"],"relevant_docs":["企微AI机器人-开发路线图.md"],"category":"技术","difficulty":"hard"},
+  {"id":"wecom-setup","question":"配置企微机器人需要获取哪些信息","expected_keywords":["CorpID","AgentID","Secret"],"relevant_docs":["企微AI机器人-开发路线图.md"],"category":"技术","difficulty":"hard"},
+  {"id":"revenue-2024","question":"公司2024年一年赚了多少钱","expected_keywords":["12.8亿"],"relevant_docs":["langflow_annual_report_2024.txt"],"category":"财务","difficulty":"easy"},
+  {"id":"profit-2024","question":"公司2024年的净利润","expected_keywords":["2.1亿"],"relevant_docs":["langflow_annual_report_2024.txt"],"category":"财务","difficulty":"easy"},
+  {"id":"employee-count","question":"公司目前有多少名员工","expected_keywords":["1200"],"relevant_docs":["langflow_annual_report_2024.txt"],"category":"财务","difficulty":"easy"},
+  {"id":"rd-spend","question":"公司在研发上投入了多少","expected_keywords":["4.2亿","32.8"],"relevant_docs":["langflow_annual_report_2024.txt"],"category":"财务","difficulty":"easy"},
+  {"id":"customer-count","question":"公司服务了多少家客户","expected_keywords":["500"],"relevant_docs":["langflow_annual_report_2024.txt"],"category":"财务","difficulty":"medium"},
+  {"id":"revenue-breakdown","question":"公司的收入来源构成","expected_keywords":["平台授权","咨询","订阅"],"relevant_docs":["langflow_annual_report_2024.txt"],"category":"财务","difficulty":"medium"},
+  {"id":"product-2024","question":"2024年发布了哪些主要产品","expected_keywords":["3.0","SDK","Cloud"],"relevant_docs":["langflow_annual_report_2024.txt"],"category":"财务","difficulty":"medium"},
+  {"id":"renewal-rate","question":"客户续约率怎么样","expected_keywords":["92%"],"relevant_docs":["langflow_annual_report_2024.txt"],"category":"财务","difficulty":"hard"},
+  {"id":"employee-benefits","question":"公司给员工提供了哪些福利","expected_keywords":["年假","培训经费","弹性"],"relevant_docs":["langflow_annual_report_2024.txt"],"category":"财务","difficulty":"hard"},
+  {"id":"encryption","question":"企业微信消息的加密方式是什么","expected_keywords":["AES"],"relevant_docs":["企微AI机器人-开发路线图.md"],"category":"技术","difficulty":"easy"}
 ]

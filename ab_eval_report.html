@@ -15,34 +15,94 @@ td{padding:10px 12px;font-size:13px;border-bottom:1px solid #f0f0f0}
 </head>
 <body>
 <h1>🧠 A/B 评估 — 检索器对比</h1>
-<div class="date">2026-06-23 16:16 · 基线: 单路向量检索 vs 改进: 多路召回+句子窗口</div>
+<div class="date">2026-06-23 16:26 · 基线: 单路向量检索 vs 改进: 多路召回+句子窗口</div>
 <div class="summary">
-<div class="sc"><div class="v">100.0%</div><div class="l">基线命中率</div></div>
-<div class="sc"><div class="v">100.0%</div><div class="l">改进命中率</div><div class="s up">+0.0%</div></div>
-<div class="sc"><div class="v">20.0%</div><div class="l">基线召回率</div></div>
-<div class="sc"><div class="v">20.0%</div><div class="l">改进召回率</div><div class="s up">+0.0%</div></div>
+<div class="sc"><div class="v">80.0%</div><div class="l">基线命中率</div></div>
+<div class="sc"><div class="v">86.7%</div><div class="l">改进命中率</div><div class="s up">+6.7%</div></div>
+<div class="sc"><div class="v">100.0%</div><div class="l">基线召回率</div></div>
+<div class="sc"><div class="v">100.0%</div><div class="l">改进召回率</div><div class="s up">+0.0%</div></div>
 </div>
 <h2 style="font-size:16px;font-weight:600;margin-bottom:12px">📋 逐用例对比</h2>
 <table><thead><tr><th>分类</th><th>问题</th><th>命中率变化</th><th>召回率变化</th><th>基线命中词</th><th>改进命中词</th></tr></thead>
-<tbody><tr><td>财务</td><td>LangFlow 2024年营收多少</td>
-<td class="">100.0% → 100.0% → +0.0%</td>
-<td>—% → —%</td>
-<td>12.8亿, 12.8</td>
-<td>12.8亿, 12.8</td></tr><tr><td>财务</td><td>LangFlow 2024年净利润多少</td>
-<td class="">100.0% → 100.0% → +0.0%</td>
-<td>—% → —%</td>
-<td>2.1亿, 2.1</td>
-<td>2.1亿, 2.1</td></tr><tr><td>财务</td><td>LangFlow 公司有多少员工</td>
-<td class="">100.0% → 100.0% → +0.0%</td>
-<td>—% → —%</td>
-<td>1200</td>
-<td>1200</td></tr><tr><td>财务</td><td>LangFlow 公司成立于哪一年</td>
-<td class="">100.0% → 100.0% → +0.0%</td>
-<td>—% → —%</td>
-<td>2020</td>
-<td>2020</td></tr><tr><td>技术</td><td>企微AI机器人有哪些核心技术</td>
+<tbody><tr><td>技术</td><td>企微AI机器人用了哪些技术栈</td>
 <td class="">100.0% → 100.0% → +0.0%</td>
 <td>100.0% → 100.0%</td>
-<td>LangChain, Python</td>
-<td>LangChain, Python</td></tr></tbody></table>
+<td>Python, FastAPI</td>
+<td>Python, FastAPI</td></tr><tr><td>技术</td><td>企业微信的Webhook回调地址需要满足什么条件</td>
+<td class="">100.0% → 100.0% → +0.0%</td>
+<td>100.0% → 100.0%</td>
+<td>公网, IP</td>
+<td>公网, IP</td></tr><tr><td>技术</td><td>企业微信回调消息是什么格式</td>
+<td class="">100.0% → 100.0% → +0.0%</td>
+<td>100.0% → 100.0%</td>
+<td>XML</td>
+<td>XML</td></tr><tr><td>技术</td><td>这个机器人项目用了哪些数据库</td>
+<td class="">100.0% → 100.0% → +0.0%</td>
+<td>100.0% → 100.0%</td>
+<td>ChromaDB, Redis</td>
+<td>ChromaDB, Redis</td></tr><tr><td>技术</td><td>多轮对话记忆是怎么实现的</td>
+<td class="">100.0% → 100.0% → +0.0%</td>
+<td>100.0% → 100.0%</td>
+<td>Redis, TTL</td>
+<td>Redis, TTL</td></tr><tr><td>技术</td><td>部署这个机器人需要什么云服务器配置</td>
+<td class="up">0.0% → 33.3% ↑ +33.3%</td>
+<td>100.0% → 100.0%</td>
+<td>—</td>
+<td>2G</td></tr><tr><td>技术</td><td>开发企微机器人时ngrok是用来做什么的</td>
+<td class="">0.0% → 0.0% → +0.0%</td>
+<td>100.0% → 100.0%</td>
+<td>—</td>
+<td>—</td></tr><tr><td>技术</td><td>为什么切片大小选择500</td>
+<td class="">100.0% → 100.0% → +0.0%</td>
+<td>100.0% → 100.0%</td>
+<td>500, 准确率</td>
+<td>500, 准确率</td></tr><tr><td>技术</td><td>如果只有两周时间开发这个机器人最优先做什么</td>
+<td class="">100.0% → 100.0% → +0.0%</td>
+<td>100.0% → 100.0%</td>
+<td>P0, LLM</td>
+<td>P0, LLM</td></tr><tr><td>技术</td><td>配置企微机器人需要获取哪些信息</td>
+<td class="">100.0% → 100.0% → +0.0%</td>
+<td>100.0% → 100.0%</td>
+<td>CorpID, AgentID</td>
+<td>CorpID, AgentID</td></tr><tr><td>财务</td><td>公司2024年一年赚了多少钱</td>
+<td class="">0.0% → 0.0% → +0.0%</td>
+<td>100.0% → 100.0%</td>
+<td>—</td>
+<td>—</td></tr><tr><td>财务</td><td>公司2024年的净利润</td>
+<td class="">100.0% → 100.0% → +0.0%</td>
+<td>100.0% → 100.0%</td>
+<td>2.1亿</td>
+<td>2.1亿</td></tr><tr><td>财务</td><td>公司目前有多少名员工</td>
+<td class="">100.0% → 100.0% → +0.0%</td>
+<td>100.0% → 100.0%</td>
+<td>1200</td>
+<td>1200</td></tr><tr><td>财务</td><td>公司在研发上投入了多少</td>
+<td class="">100.0% → 100.0% → +0.0%</td>
+<td>100.0% → 100.0%</td>
+<td>4.2亿, 32.8</td>
+<td>4.2亿, 32.8</td></tr><tr><td>财务</td><td>公司服务了多少家客户</td>
+<td class="">100.0% → 100.0% → +0.0%</td>
+<td>100.0% → 100.0%</td>
+<td>500</td>
+<td>500</td></tr><tr><td>财务</td><td>公司的收入来源构成</td>
+<td class="">100.0% → 100.0% → +0.0%</td>
+<td>100.0% → 100.0%</td>
+<td>平台授权, 咨询</td>
+<td>平台授权, 咨询</td></tr><tr><td>财务</td><td>2024年发布了哪些主要产品</td>
+<td class="">100.0% → 100.0% → +0.0%</td>
+<td>100.0% → 100.0%</td>
+<td>3.0, SDK</td>
+<td>3.0, SDK</td></tr><tr><td>财务</td><td>客户续约率怎么样</td>
+<td class="">100.0% → 100.0% → +0.0%</td>
+<td>100.0% → 100.0%</td>
+<td>92%</td>
+<td>92%</td></tr><tr><td>财务</td><td>公司给员工提供了哪些福利</td>
+<td class="">100.0% → 100.0% → +0.0%</td>
+<td>100.0% → 100.0%</td>
+<td>年假, 培训经费</td>
+<td>年假, 培训经费</td></tr><tr><td>技术</td><td>企业微信消息的加密方式是什么</td>
+<td class="up">0.0% → 100.0% ↑ +100.0%</td>
+<td>100.0% → 100.0%</td>
+<td>—</td>
+<td>AES</td></tr></tbody></table>
 </body></html>
