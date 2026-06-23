@@ -1,6 +1,34 @@
 {
   "user": [
     {
+      "id": "conv-3",
+      "title": "企业开发路线",
+      "created_at": "2026-06-22T15:52:06+00:00",
+      "updated_at": "2026-06-22T15:52:41+00:00",
+      "messages": [
+        {
+          "role": "user",
+          "content": "企业开发路线",
+          "timestamp": "2026-06-22T15:52:06+00:00"
+        },
+        {
+          "role": "assistant",
+          "content": "我没有找到相关信息。",
+          "timestamp": "2026-06-22T15:52:13+00:00"
+        },
+        {
+          "role": "user",
+          "content": "企微AI机器人-开发路线图",
+          "timestamp": "2026-06-22T15:52:34+00:00"
+        },
+        {
+          "role": "assistant",
+          "content": "根据知识库内容，以下是企业微信AI机器人的开发路线图：\n\n**项目最终效果**：面试官扫码加入企业微信群 → @机器人提问 → 机器人从知识库检索并回答 → 当场演示。\n\n**技术架构**：\n- 企业微信群 → @机器人提问\n- 企业微信服务器 → POST XML 到 Webhook\n- FastAPI 接收 → 解密 → 解析消息\n- 判断意图 → FAQ直接回答 / 文档问题走RAG\n- RAG管线：检索ChromaDB → 拼接Prompt → 调LLM API\n- 生成回复 → 调用企微API发回群聊\n- Redis记录对话历史（多轮记忆）\n\n**核心技术栈**：Python · FastAPI · LangChain · ChromaDB · Redis · DeepSeek API · 企微开放平台\n\n**第1周：核心跑通（最小可用版本）**\n- **Day 1-2**：企业微信机器人注册 + 收发消息\n  - 注册企业微信（个人即可，不需要企业认证）\n  - 创建应用 → 获取CorpID / AgentID / Secret\n  - 配置Webhook回调URL（需要公网IP或域名）\n  - 写FastAPI接收消息的端点，解析XML\n  - 实现最简单的echo：收到消息 → 原样回复\n\n**关键代码文件**：\n```\n├── main.py              # FastAPI 入口\n├── wecom/\n│   ├── __init__.py\n│   ├── crypto.py        # 企微消息加解密（WXBizMsgCrypt）\n│   └── handler.py       # 消息分发\n└── requirements.txt\n```",
+          "timestamp": "2026-06-22T15:52:41+00:00"
+        }
+      ]
+    },
+    {
       "id": "conv-2",
       "title": "新对话",
       "created_at": "2026-06-22T13:52:19+00:00",

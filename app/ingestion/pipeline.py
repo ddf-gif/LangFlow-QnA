@@ -61,6 +61,11 @@ def split_documents(docs: List[Document]) -> List[Document]:
         4. 最后按字符数硬切
 
     这样能最大程度保留语义完整性。
+
+    同时为每个 chunk 写入元数据：
+        - chunk_index: 当前 chunk 在该 source 文件中的序号
+        - source: 来源文件路径（继承自原始文档）
+    这些元数据用于句子窗口检索时定位相邻片段。
     """
     splitter = RecursiveCharacterTextSplitter(
         chunk_size=500,          # 每个片段大小（字符数）
@@ -69,6 +74,16 @@ def split_documents(docs: List[Document]) -> List[Document]:
         length_function=len,
     )
     chunks = splitter.split_documents(docs)
+
+    # 为每个 chunk 写入 chunk_index 元数据（按 source 分组编号）
+    # 这样句子窗口检索时可以根据 (source, chunk_index±1) 找到相邻片段
+    counter: dict[str, int] = {}
+    for chunk in chunks:
+        source = chunk.metadata.get("source", "unknown")
+        idx = counter.get(source, 0)
+        chunk.metadata["chunk_index"] = idx
+        counter[source] = idx + 1
+
     print(f"  切分成 {len(chunks)} 个片段")
     return chunks
 

@@ -28,12 +28,18 @@ async def chat(req: ChatRequest) -> ChatResponse:
             config=config,
         )
         reply = result["messages"][-1].content
+        # 提取检索来源
+        sources = list(set(
+            doc.metadata.get("source", "未知来源")
+            for doc in result.get("retrieved_docs", [])
+        ))
     except Exception:
         success = False
         reply = "抱歉，处理请求时出错，请稍后重试。"
+        sources = []
     latency = (time.time() - start) * 1000
     record_qa(req.message, reply, latency, success)
-    return ChatResponse(reply=reply, session_id=req.session_id)
+    return ChatResponse(reply=reply, session_id=req.session_id, sources=sources)
 
 
 @router.post("/stream")

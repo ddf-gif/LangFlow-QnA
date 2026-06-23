@@ -1,0 +1,37 @@
+[
+  {
+    "id": "revenue-2024",
+    "question": "LangFlow 2024年营收多少",
+    "expected_keywords": ["12.8亿", "12.8"],
+    "relevant_docs": ["langflow_annual_report_2024.txt"],
+    "category": "财务"
+  },
+  {
+    "id": "profit-2024",
+    "question": "LangFlow 2024年净利润多少",
+    "expected_keywords": ["2.1亿", "2.1"],
+    "relevant_docs": ["langflow_annual_report_2024.txt"],
+    "category": "财务"
+  },
+  {
+    "id": "employees",
+    "question": "LangFlow 公司有多少员工",
+    "expected_keywords": ["1200"],
+    "relevant_docs": ["langflow_annual_report_2024.txt"],
+    "category": "财务"
+  },
+  {
+    "id": "founded",
+    "question": "LangFlow 公司成立于哪一年",
+    "expected_keywords": ["2020"],
+    "relevant_docs": ["langflow_annual_report_2024.txt"],
+    "category": "财务"
+  },
+  {
+    "id": "ai-tech-stack",
+    "question": "企微AI机器人有哪些核心技术",
+    "expected_keywords": ["LangChain", "Python", "FastAPI"],
+    "relevant_docs": ["企微AI机器人-开发路线图.md"],
+    "category": "技术"
+  }
+]

@@ -947,9 +947,12 @@ async function csend(){
     const r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:t,session_id:sessionId})});
     const d=await r.json();bot.textContent='';bot.textContent=d.reply;
     const ct=document.createElement('div');ct.className='ts';
-    const cits=document.createElement('span');cits.innerHTML=' · <span class="cit" onclick="event.stopPropagation();showSrcModal()">📖 2 篇引用</span>';
-    ct.appendChild(document.createTextNode(new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})));
-    ct.appendChild(cits);bot.appendChild(ct);
+    const srcs=d.sources||[];const n=srcs.length;
+    const citHtml=n?' · <span class="cit" onclick="event.stopPropagation();showSrcModal()">📖 '+n+' 篇引用</span>':'';
+    if(citHtml){const cits=document.createElement('span');cits.innerHTML=citHtml;ct.appendChild(cits)}
+    window._lastSrcs=srcs;
+    ct.insertBefore(document.createTextNode(new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})),ct.firstChild);
+    bot.appendChild(ct);
   }catch(e){bot.textContent='请求失败，请检查服务'}
   b.disabled=false;thinking=false;i.focus();c.scrollTop=c.scrollHeight
 }
@@ -965,7 +968,15 @@ function resetMemory(){
 }
 
 // ── Source Modal ──
-function showSrcModal(){document.getElementById('srcM').classList.add('show')}
+function showSrcModal(){
+  const srcs=window._lastSrcs||[];
+  const hdr=document.querySelector('#srcM .src-h h3');
+  const bd=document.querySelector('#srcM .src-bd');
+  hdr.textContent='📖 引用来源 · '+srcs.length+' 篇文档';
+  if(srcs.length){bd.innerHTML=srcs.map((s,i)=>'<div class="si"><div class="sih">📄 '+escHtml(s)+'</div></div>').join('')}
+  else{bd.innerHTML='<div style="padding:16px;color:var(--text-muted);text-align:center">暂无引用来源</div>'}
+  document.getElementById('srcM').classList.add('show')
+}
 function closeSrc(){document.getElementById('srcM').classList.remove('show')}
 
 // ── Doc Management ──

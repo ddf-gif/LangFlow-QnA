@@ -15,6 +15,7 @@ class ChatResponse(BaseModel):
     """对话响应。"""
     reply: str
     session_id: str
+    sources: List[str] = []
 
 
 class DocItem(BaseModel):

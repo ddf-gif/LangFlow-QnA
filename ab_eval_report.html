@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8"><title>A/B 评估报告</title>
+<style>
+body{font-family:'Noto Sans SC',sans-serif;background:#f5f5f5;color:#1a1a1a;padding:24px;max-width:1000px;margin:auto}
+h1{font-size:22px;font-weight:700}.date{color:#666;font-size:13px;margin-bottom:20px}
+.summary{display:flex;gap:16px;margin-bottom:24px}
+.sc{background:#fff;border-radius:8px;padding:16px 20px;flex:1;border:1px solid #e0e0e0}
+.sc .v{font-size:26px;font-weight:700}.sc .l{font-size:12px;color:#666;margin-top:2px}.sc .s{font-size:13px;margin-top:4px}
+.up{color:#4CAF84}.down{color:#E53935}
+table{width:100%;border-collapse:collapse;background:#fff;border-radius:8px;overflow:hidden;border:1px solid #e0e0e0}
+th{text-align:left;padding:10px 12px;font-size:11px;font-weight:600;color:#666;border-bottom:1px solid #e0e0e0;background:#fafafa}
+td{padding:10px 12px;font-size:13px;border-bottom:1px solid #f0f0f0}
+</style>
+</head>
+<body>
+<h1>🧠 A/B 评估 — 检索器对比</h1>
+<div class="date">2026-06-23 16:16 · 基线: 单路向量检索 vs 改进: 多路召回+句子窗口</div>
+<div class="summary">
+<div class="sc"><div class="v">100.0%</div><div class="l">基线命中率</div></div>
+<div class="sc"><div class="v">100.0%</div><div class="l">改进命中率</div><div class="s up">+0.0%</div></div>
+<div class="sc"><div class="v">20.0%</div><div class="l">基线召回率</div></div>
+<div class="sc"><div class="v">20.0%</div><div class="l">改进召回率</div><div class="s up">+0.0%</div></div>
+</div>
+<h2 style="font-size:16px;font-weight:600;margin-bottom:12px">📋 逐用例对比</h2>
+<table><thead><tr><th>分类</th><th>问题</th><th>命中率变化</th><th>召回率变化</th><th>基线命中词</th><th>改进命中词</th></tr></thead>
+<tbody><tr><td>财务</td><td>LangFlow 2024年营收多少</td>
+<td class="">100.0% → 100.0% → +0.0%</td>
+<td>—% → —%</td>
+<td>12.8亿, 12.8</td>
+<td>12.8亿, 12.8</td></tr><tr><td>财务</td><td>LangFlow 2024年净利润多少</td>
+<td class="">100.0% → 100.0% → +0.0%</td>
+<td>—% → —%</td>
+<td>2.1亿, 2.1</td>
+<td>2.1亿, 2.1</td></tr><tr><td>财务</td><td>LangFlow 公司有多少员工</td>
+<td class="">100.0% → 100.0% → +0.0%</td>
+<td>—% → —%</td>
+<td>1200</td>
+<td>1200</td></tr><tr><td>财务</td><td>LangFlow 公司成立于哪一年</td>
+<td class="">100.0% → 100.0% → +0.0%</td>
+<td>—% → —%</td>
+<td>2020</td>
+<td>2020</td></tr><tr><td>技术</td><td>企微AI机器人有哪些核心技术</td>
+<td class="">100.0% → 100.0% → +0.0%</td>
+<td>100.0% → 100.0%</td>
+<td>LangChain, Python</td>
+<td>LangChain, Python</td></tr></tbody></table>
+</body></html>
